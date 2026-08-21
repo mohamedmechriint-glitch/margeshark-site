@@ -1,0 +1,33 @@
+# MargeShark
+
+> Extension Chrome qui analyse chaque annonce Leboncoin avec l'intelligence artificielle (Google Gemini) pour aider les acheteurs et revendeurs occasionnels à repérer les bonnes affaires, estimer une marge de revente réaliste, détecter les arnaques potentielles, et négocier efficacement.
+
+## Ce que fait MargeShark
+
+Directement sur la page d'annonce Leboncoin, sans changer d'onglet, MargeShark affiche :
+- Un score de fiabilité de l'affaire sur 10
+- Une estimation du prix de marché et de la marge de revente potentielle
+- Une liste de red flags (arnaques, incohérences, vendeur suspect)
+- Trois scripts de négociation prêts à copier (approche rapide, douce, appuyée)
+- Un avis sur les défauts connus et pièges courants du produit concerné
+
+## Offres
+
+- **Gratuit** : 5 analyses par jour, nécessite une clé API Google Gemini personnelle (gratuite).
+- **Requin Tigre** (14,99€) : pack de 500 analyses, paiement unique, sans engagement, sans limite de temps.
+- **Grand Blanc** (19,99€/mois) : 2000 analyses par mois, abonnement sans engagement, résiliable à tout moment.
+
+## Périmètre
+
+MargeShark fonctionne exclusivement sur Leboncoin.fr. L'extension est indépendante et n'est affiliée ni à Leboncoin, ni à Google.
+
+## Éditeur
+
+MargeShark est édité par Mohamed Mechri, Entrepreneur Individuel basé à Lyon, France (SIREN 919 196 071).
+
+## Pages
+
+- Site principal et tarifs : https://margeshark.fr/
+- Conditions Générales d'Utilisation : https://margeshark.fr/cgu.html
+- Conditions Générales de Vente : https://margeshark.fr/cgv.html
+- Mentions légales : https://margeshark.fr/mentions-legales.html

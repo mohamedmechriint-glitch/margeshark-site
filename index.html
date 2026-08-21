@@ -12,7 +12,7 @@
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="MargeShark" />
-<meta property="og:title" content="MargeShark - L'IA qui traque les bonnes affaires sur Leboncoin" />
+<meta property="og:title" content="MargeShark - Ne rate plus aucune bonne affaire sur Leboncoin" />
 <meta property="og:description" content="Score de fiabilité, marge de revente réelle, red flags et scripts de négociation générés par IA, directement sur chaque annonce Leboncoin. 5 analyses gratuites par jour." />
 <meta property="og:url" content="https://margeshark.fr/" />
 <meta property="og:locale" content="fr_FR" />
@@ -21,9 +21,31 @@
 <meta property="og:image:height" content="630" />
 
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="MargeShark - L'IA qui traque les bonnes affaires sur Leboncoin" />
+<meta name="twitter:title" content="MargeShark - Ne rate plus aucune bonne affaire sur Leboncoin" />
 <meta name="twitter:description" content="Score de fiabilité, marge de revente réelle, red flags et scripts de négociation générés par IA, directement sur chaque annonce Leboncoin." />
 <meta name="twitter:image" content="https://margeshark.fr/og-image.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MargeShark",
+  "url": "https://margeshark.fr/",
+  "logo": "https://margeshark.fr/og-image.png",
+  "founder": {
+    "@type": "Person",
+    "name": "Mohamed Mechri"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Rue Cuvier",
+    "addressLocality": "Lyon",
+    "postalCode": "69006",
+    "addressCountry": "FR"
+  },
+  "vatID": "FR57919196071"
+}
+</script>
 
 <script type="application/ld+json">
 {
@@ -396,6 +418,36 @@
 
   .btn-google:hover { opacity: 0.9; }
 
+  .email-login-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+    color: #04302c;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 6px 16px -6px rgba(45, 212, 191, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .email-login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -6px rgba(45, 212, 191, 0.5);
+  }
+
+  .email-login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   .login-divider {
     display: flex;
     align-items: center;
@@ -424,7 +476,7 @@
     .nav-links { display: none; }
   }
 
-  /* ===== HERO ======= */
+  /* ===== HERO ===== */
   .hero {
     position: relative;
     padding: 108px 0 130px 0;
@@ -949,6 +1001,7 @@
   /* ===== FAQ ===== */
   .faq-list {
     max-width: 720px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -1132,22 +1185,30 @@
       <h2 id="loginModalTitle">Mon espace MargeShark</h2>
       <p class="login-sub">Retrouve tes factures et gère ton abonnement.</p>
 
-      <button class="btn-google" id="googleLoginBtn" type="button">
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.88 2.69-6.62z"/>
-          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33A9 9 0 0 0 9 18z"/>
-          <path fill="#FBBC05" d="M3.96 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z"/>
-          <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z"/>
-        </svg>
-        Continuer avec Google
-      </button>
-
-      <div class="login-divider">ou</div>
-
-      <div class="license-input-wrap" style="margin-bottom: 10px;">
-        <input type="email" id="loginEmailInput" placeholder="ton@email.com" autocomplete="email" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:13px; font-family:inherit; outline:none;" />
+      <!-- Étape 1 : saisie de l'email -->
+      <div id="loginStepEmail">
+        <div class="license-input-wrap" style="margin-bottom: 10px;">
+          <input type="email" id="loginEmailInput" placeholder="ton@email.com" autocomplete="email" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:13px; font-family:inherit; outline:none;" />
+        </div>
+        <button class="email-login-btn" id="emailLoginBtn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v16H4z" stroke="none"/><path d="M4 6l8 6 8-6M4 6v12h16V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Recevoir un code de connexion
+        </button>
       </div>
-      <button class="license-activate-btn" id="emailLoginBtn" type="button" style="width:100%;">Recevoir un lien de connexion</button>
+
+      <!-- Étape 2 : saisie du code (cachée par défaut) -->
+      <div id="loginStepCode" style="display:none;">
+        <p style="font-size:12.5px; color:#a8bdcc; margin:0 0 12px 0; text-align:center;">
+          Code envoyé à <strong id="loginCodeEmailDisplay" style="color:#eaf3f7;"></strong>
+        </p>
+        <div class="license-input-wrap" style="margin-bottom: 10px;">
+          <input type="text" id="loginCodeInput" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:22px; font-family:'Courier New', monospace; letter-spacing:8px; text-align:center; outline:none;" />
+        </div>
+        <button class="email-login-btn" id="verifyCodeBtn" type="button">Vérifier le code</button>
+        <button type="button" id="backToEmailBtn" style="width:100%; margin-top:8px; background:none; border:none; color:#5e7488; font-size:12px; cursor:pointer; font-family:inherit; text-decoration:underline;">
+          ← Changer d'adresse email
+        </button>
+      </div>
 
       <p class="login-modal-note">En te connectant, tu retrouves ton historique de facturation et peux gérer ton abonnement Lemon Squeezy. Aucune donnée n'est partagée avec des tiers.</p>
     </div>
@@ -1159,7 +1220,7 @@
     <div class="hero-inner">
       <div>
         <div class="eyebrow">🦈 Extension Chrome pour Leboncoin</div>
-        <h1>L'IA qui <span class="accent">repère les bonnes affaires</span> avant toi</h1>
+        <h1>Ne rate plus aucune <span class="accent">bonne affaire</span> sur Leboncoin</h1>
         <p class="hero-sub">MargeShark analyse chaque annonce Leboncoin en quelques secondes : score de fiabilité, marge de revente réelle, red flags, et scripts de négociation prêts à copier. Directement sur la page, sans changer d'onglet.</p>
         <div class="hero-ctas">
           <a class="btn-primary" href="#tarifs">Installer gratuitement <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
@@ -1413,6 +1474,10 @@
     document.getElementById("navLogo").src = logoSrc;
     document.getElementById("footerLogo").src = logoSrc;
 
+    // ⚠️ À remplacer par l'URL réelle une fois le backend déployé sur son
+    // domaine définitif.
+    const MARGESHARK_BACKEND_URL = "https://api.margeshark.fr";
+
     // FAQ accordion
     document.querySelectorAll(".faq-item").forEach((item) => {
       const btn = item.querySelector(".faq-q");
@@ -1477,17 +1542,91 @@
       if (e.key === "Escape" && loginOverlay.classList.contains("open")) closeLoginModal();
     });
 
-    document.getElementById("googleLoginBtn").addEventListener("click", () => {
-      alert("Connexion Google : nécessite la mise en place d'un vrai OAuth (Supabase Auth ou équivalent) côté serveur, pas encore configurée.");
-    });
+    document.getElementById("emailLoginBtn").addEventListener("click", async () => {
+      const emailInput = document.getElementById("loginEmailInput");
+      const email = emailInput.value.trim();
+      const btn = document.getElementById("emailLoginBtn");
 
-    document.getElementById("emailLoginBtn").addEventListener("click", () => {
-      const email = document.getElementById("loginEmailInput").value.trim();
       if (!email || !email.includes("@")) {
         alert("Merci de saisir une adresse email valide.");
         return;
       }
-      alert("Envoi du lien de connexion : nécessite un service d'emailing réel (Resend, Supabase Auth...) côté serveur, pas encore configuré.");
+
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+      btn.textContent = "Envoi en cours...";
+
+      try {
+        const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/request-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Passage à l'étape 2 : saisie du code
+          document.getElementById("loginCodeEmailDisplay").textContent = email;
+          document.getElementById("loginStepEmail").style.display = "none";
+          document.getElementById("loginStepCode").style.display = "block";
+          document.getElementById("loginCodeInput").focus();
+        } else {
+          alert(data.message || "Une erreur est survenue. Réessaie dans quelques instants.");
+        }
+      } catch (error) {
+        console.warn("[MargeShark] Erreur envoi code de connexion :", error);
+        alert("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    });
+
+    document.getElementById("verifyCodeBtn").addEventListener("click", async () => {
+      const email = document.getElementById("loginCodeEmailDisplay").textContent;
+      const codeInput = document.getElementById("loginCodeInput");
+      const code = codeInput.value.trim();
+      const btn = document.getElementById("verifyCodeBtn");
+
+      if (code.length !== 6) {
+        alert("Le code doit contenir 6 chiffres.");
+        return;
+      }
+
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Vérification...";
+
+      try {
+        const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/verify-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // indispensable pour recevoir le cookie de session
+          body: JSON.stringify({ email, code })
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          btn.textContent = "✓ Connecté";
+          window.location.href = data.redirectUrl || "https://margeshark.fr/espace-client.html";
+        } else {
+          alert(data.message || "Code incorrect.");
+          codeInput.value = "";
+          codeInput.focus();
+        }
+      } catch (error) {
+        console.warn("[MargeShark] Erreur vérification code :", error);
+        alert("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+      }
+
+      btn.disabled = false;
+      btn.textContent = originalText;
+    });
+
+    document.getElementById("backToEmailBtn").addEventListener("click", () => {
+      document.getElementById("loginStepCode").style.display = "none";
+      document.getElementById("loginStepEmail").style.display = "block";
+      document.getElementById("loginCodeInput").value = "";
     });
   </script>
 

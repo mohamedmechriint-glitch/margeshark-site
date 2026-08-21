@@ -1,0 +1,9 @@
+# MargeShark - robots.txt
+# Autorise explicitement les robots des moteurs de recherche classiques
+# ET des IA génératives (GPTBot, ClaudeBot, PerplexityBot, etc.) à indexer
+# ce site - l'objectif est justement d'être cité par ces outils.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://margeshark.fr/sitemap.xml
