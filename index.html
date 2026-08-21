@@ -1474,9 +1474,9 @@
     document.getElementById("navLogo").src = logoSrc;
     document.getElementById("footerLogo").src = logoSrc;
 
-    // ⚠️ À remplacer par l'URL réelle une fois le backend déployé sur son
-    // domaine définitif.
-    const MARGESHARK_BACKEND_URL = "https://api.margeshark.fr";
+    // ⚠️ À remplacer par https://api.margeshark.fr une fois ce sous-domaine
+    // configuré et pointé vers Railway. En attendant, URL Railway directe.
+    const MARGESHARK_BACKEND_URL = "https://margeshark-production.up.railway.app";
 
     // FAQ accordion
     document.querySelectorAll(".faq-item").forEach((item) => {
