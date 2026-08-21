@@ -771,7 +771,7 @@
 
     <nav class="sidebar-nav">
       <button class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Tableau de bord</span></button>
-      <button class="nav-item" data-view="alerts"><span class="nav-icon">🔔</span><span class="nav-label">Alertes &amp; Recherches</span></button>
+      <button class="nav-item" data-view="alerts"><span class="nav-icon">📦</span><span class="nav-label">Articles sauvegardés</span></button>
       <button class="nav-item" data-view="analyzer"><span class="nav-icon">🧮</span><span class="nav-label">Analyseur de Marge</span></button>
       <button class="nav-item" data-view="apiconfig"><span class="nav-icon">🔑</span><span class="nav-label">Clé API Gemini</span></button>
       <button class="nav-item" data-view="billing"><span class="nav-icon">💳</span><span class="nav-label">Abonnement &amp; Facturation</span></button>
@@ -864,24 +864,21 @@
 
         <div class="glass-card">
           <div class="section-title">
-            <span>🔴 Opportunités repérées en temps réel</span>
+            <span>📦 Derniers articles sauvegardés</span>
             <button class="btn btn-outline btn-sm" data-view-link="alerts">Voir tout</button>
           </div>
           <div class="feed-list" id="feedList"></div>
         </div>
       </section>
 
-      <!-- ===================== VIEW: ALERTS ===================== -->
+      <!-- ===================== VIEW: SAVED ITEMS ===================== -->
       <section class="view" id="view-alerts">
         <div class="view-header">
-          <h1>Alertes &amp; Recherches</h1>
-          <p>Configure des alertes sur-mesure et consulte les opportunités détectées.</p>
+          <h1>Articles sauvegardés</h1>
+          <p>Retrouve ici toutes les annonces mises de côté depuis l'extension MargeShark.</p>
         </div>
 
         <div class="glass-card mb-section">
-          <div class="section-title">
-            <span>🎯 Opportunités détectées</span>
-          </div>
           <div class="form-row" style="margin-bottom: 16px;">
             <div class="form-group" style="margin-bottom:0;">
               <label class="form-label">Marge minimale</label>
@@ -905,44 +902,13 @@
           </div>
           <table class="data-table" id="opportunitiesTable">
             <thead>
-              <tr><th>Annonce</th><th>Catégorie</th><th>Prix</th><th>Marge</th><th>Score</th></tr>
+              <tr><th>Article</th><th>Catégorie</th><th>Prix d'achat</th><th>Prix cible</th><th>Marge</th><th>Ajouté le</th><th>Lien</th></tr>
             </thead>
             <tbody id="opportunitiesBody"></tbody>
           </table>
-        </div>
-
-        <div class="glass-card">
-          <div class="section-title">
-            <span>➕ Créer une alerte sur-mesure</span>
+          <div id="savedItemsEmpty" class="muted" style="text-align:center; padding:30px 0; display:none;">
+            Aucun article sauvegardé pour l'instant. Utilise le bouton « 💾 Sauvegarder » depuis l'extension sur une annonce Leboncoin pour la retrouver ici.
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Mots-clés</label>
-              <input type="text" class="form-input" id="alertKeywords" placeholder="ex: iPhone 13, vélo électrique..." />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Canal de notification</label>
-              <select class="form-select" id="alertChannel">
-                <option value="email">📧 Email</option>
-                <option value="telegram">✈️ Telegram</option>
-                <option value="discord">🎮 Discord</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Marge cible minimale (%)</label>
-              <input type="number" class="form-input" id="alertMargin" placeholder="ex: 30" min="0" max="100" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Seuil de prix maximum (€)</label>
-              <input type="number" class="form-input" id="alertPrice" placeholder="ex: 200" min="0" />
-            </div>
-          </div>
-          <button class="btn btn-teal" id="createAlertBtn">Créer l'alerte</button>
-          <div class="form-hint" style="margin-top:10px;">⚠️ L'envoi réel de notifications Telegram/Discord nécessite la configuration d'un backend et des webhooks correspondants - non actif dans cette maquette.</div>
-
-          <div id="alertsList" style="margin-top:18px;"></div>
         </div>
       </section>
 
@@ -950,37 +916,32 @@
       <section class="view" id="view-analyzer">
         <div class="view-header">
           <h1>Analyseur de Marge</h1>
-          <p>Calcule rapidement la marge potentielle d'un article, indépendamment de l'extension.</p>
+          <p>Colle le lien d'une annonce Leboncoin pour obtenir la même analyse que sur l'extension, directement ici.</p>
         </div>
 
-        <div class="grid-2">
-          <div class="glass-card">
-            <div class="section-title"><span>🧮 Calculateur</span></div>
-            <div class="form-group">
-              <label class="form-label">Nom de l'article</label>
-              <input type="text" class="form-input" id="calcName" placeholder="ex: Vélo électrique" />
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Prix d'achat (€)</label>
-                <input type="number" class="form-input" id="calcBuyPrice" placeholder="150" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Prix de revente estimé (€)</label>
-                <input type="number" class="form-input" id="calcSellPrice" placeholder="280" />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Frais annexes estimés (€) - livraison, remise en état...</label>
-              <input type="number" class="form-input" id="calcFees" placeholder="15" />
-            </div>
-            <button class="btn btn-teal btn-full" id="calcRunBtn">Calculer la marge</button>
+        <div class="glass-card mb-section">
+          <div class="section-title"><span>🔗 Analyser une annonce</span></div>
+          <div class="form-group">
+            <label class="form-label">Ta clé de licence (Requin Tigre ou Grand Blanc)</label>
+            <input type="text" class="form-input" id="analyzeLicenseInput" placeholder="Coller ta clé de licence..." />
           </div>
+          <div class="form-row" style="align-items:flex-end;">
+            <div class="form-group" style="flex:1; margin-bottom:0;">
+              <label class="form-label">URL de l'annonce Leboncoin</label>
+              <input type="text" class="form-input" id="analyzeUrlInput" placeholder="https://www.leboncoin.fr/..." />
+            </div>
+            <div class="form-group" style="width:160px; margin-bottom:0;">
+              <label class="form-label">Frais annexes (€)</label>
+              <input type="number" class="form-input" id="analyzeFeesInput" placeholder="0" value="0" min="0" />
+            </div>
+            <button class="btn btn-teal" id="analyzeUrlBtn" style="height:42px;">Analyser</button>
+          </div>
+          <div class="form-hint" style="margin-top:10px;">Les frais annexes (livraison, remise en état...) sont déduits de la marge calculée ci-dessous, une fois l'analyse reçue.</div>
+        </div>
 
-          <div class="glass-card" id="calcResultCard">
-            <div class="section-title"><span>📈 Résultat</span></div>
-            <div id="calcResultBody" style="color: var(--text-dim); font-size: 13px;">Renseigne les champs et clique sur « Calculer la marge » pour voir le résultat ici.</div>
-          </div>
+        <div class="glass-card" id="calcResultCard">
+          <div class="section-title"><span>📈 Résultat</span></div>
+          <div id="calcResultBody" style="color: var(--text-dim); font-size: 13px;">Colle le lien d'une annonce ci-dessus et clique sur « Analyser » pour voir le résultat ici.</div>
         </div>
       </section>
 
@@ -1011,6 +972,16 @@
         <div class="view-header">
           <h1>Abonnement &amp; Facturation</h1>
           <p>Gère ton forfait, ton moyen de paiement et consulte tes factures.</p>
+        </div>
+
+        <div class="glass-card mb-section">
+          <div class="section-title" style="margin-bottom:10px;">🔗 Mes licences</div>
+          <p class="muted" style="margin-bottom:14px;">Colle ici la clé de licence reçue par email après ton achat sur Lemon Squeezy, pour la relier à ce compte et retrouver tes annonces sauvegardées ici.</p>
+          <div style="display:flex; gap:8px; margin-bottom:14px;">
+            <input type="text" id="linkLicenseInput" placeholder="Coller ta clé de licence ici..." style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:rgba(255,255,255,0.03); color:var(--text-hi); font-size:13px;" />
+            <button class="btn btn-teal btn-sm" id="linkLicenseBtn">Relier</button>
+          </div>
+          <div id="linkedLicensesList" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
 
         <div class="glass-card mb-section">
@@ -1304,15 +1275,6 @@
 
   let store = loadStore();
 
-  const OPPORTUNITIES = [
-    { title: "Vélo électrique - très bon état", category: "Vélos", price: 180, margin: 62, score: 9 },
-    { title: "iPhone 12 128Go débloqué", category: "Téléphones", price: 210, margin: 38, score: 8 },
-    { title: "Canapé d'angle convertible", category: "Meubles", price: 120, margin: 55, score: 9 },
-    { title: "Console PS5 + 2 manettes", category: "Consoles", price: 380, margin: 12, score: 5 },
-    { title: "Table basse scandinave", category: "Meubles", price: 45, margin: 18, score: 6 },
-    { title: "Trottinette électrique", category: "Vélos", price: 90, margin: -5, score: 3 }
-  ];
-
   const INVOICES = [
     { num: "MS-2026-0912", date: "2026-08-19", amount: "19,99 €", status: "Payée" },
     { num: "MS-2026-0847", date: "2026-07-19", amount: "19,99 €", status: "Payée" },
@@ -1362,7 +1324,7 @@
   /* ===================== VIEW NAVIGATION ===================== */
   const VIEW_TITLES = {
     dashboard: "Tableau de bord",
-    alerts: "Alertes & Recherches",
+    alerts: "Articles sauvegardés",
     analyzer: "Analyseur de Marge",
     apiconfig: "Configuration IA & Clé API",
     billing: "Abonnement & Facturation",
@@ -1419,127 +1381,198 @@
   document.getElementById("logoutBtn").addEventListener("click", realLogout);
   document.getElementById("profileLogoutBtn").addEventListener("click", realLogout);
 
-  /* ===================== DASHBOARD FEED ===================== */
+  /* ===================== DERNIERS ARTICLES SAUVEGARDÉS + ARTICLES SAUVEGARDÉS (données réelles) ===================== */
+  // Remplace les anciennes fonctions basées sur OPPORTUNITIES (données fictives)
+  // et le système d'alertes (qui n'a pas de sens sans veille automatique - on
+  // ne fait aucun scraping en tâche de fond, tout est déclenché par
+  // l'utilisateur via l'extension).
+
+  let realSavedItems = [];
+
+  function computeMarginFromDeal(item) {
+    let data = {};
+    try { data = JSON.parse(item.data_json || "{}"); } catch (e) {}
+    const price = item.price || 0;
+    const targetPrice = data.marketMax || price;
+    const marginEuro = Math.round(targetPrice - price);
+    const marginPercent = price > 0 ? Math.round((marginEuro / price) * 100) : 0;
+    return { targetPrice, marginEuro, marginPercent, score: item.score || data.score || 0 };
+  }
+
   function renderFeed() {
     const list = document.getElementById("feedList");
-    list.innerHTML = OPPORTUNITIES.slice(0, 4).map((o) => `
-      <div class="feed-item">
-        <div class="feed-score" style="background:${getScoreHex(o.score)}">${o.score}</div>
-        <div class="feed-info">
-          <div class="feed-title">${escapeHtml(o.title)}</div>
-          <div class="feed-meta">${escapeHtml(o.category)} · ${o.price} €</div>
-        </div>
-        <div class="feed-margin">${o.margin >= 0 ? "+" : ""}${o.margin}%</div>
-      </div>
-    `).join("");
-  }
-  renderFeed();
+    if (!list) return;
+    const latest = realSavedItems.slice(0, 5);
 
-  /* ===================== ALERTS / OPPORTUNITIES TABLE ===================== */
-  function renderOpportunities() {
+    if (latest.length === 0) {
+      list.innerHTML = `<div class="muted" style="font-size:12.5px; padding:8px 0;">Aucun article sauvegardé pour l'instant. Utilise le bouton « Sauvegarder » depuis l'extension sur une annonce Leboncoin.</div>`;
+      return;
+    }
+
+    list.innerHTML = latest.map((item) => {
+      const { marginPercent, score } = computeMarginFromDeal(item);
+      return `
+        <div class="feed-item">
+          <div class="feed-score" style="background:${getScoreHex(score)}">${score}</div>
+          <div class="feed-info">
+            <div class="feed-title">${escapeHtml(item.title || "Article")}</div>
+            <div class="feed-meta">${escapeHtml(item.category || "")} · ${item.price || 0} €</div>
+          </div>
+          <div class="feed-margin">${marginPercent >= 0 ? "+" : ""}${marginPercent}%</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderSavedItemsTable() {
     const marginFilter = parseInt(document.getElementById("filterMargin").value, 10);
     const categoryFilter = document.getElementById("filterCategory").value;
 
-    let items = OPPORTUNITIES.filter((o) => o.margin >= marginFilter);
-    if (categoryFilter !== "all") items = items.filter((o) => o.category === categoryFilter);
+    let items = realSavedItems.filter((item) => computeMarginFromDeal(item).marginPercent >= marginFilter);
+    if (categoryFilter !== "all") items = items.filter((item) => item.category === categoryFilter);
 
     const body = document.getElementById("opportunitiesBody");
+    const emptyState = document.getElementById("savedItemsEmpty");
+    if (!body) return;
+
+    if (realSavedItems.length === 0) {
+      body.innerHTML = "";
+      if (emptyState) emptyState.style.display = "block";
+      return;
+    }
+    if (emptyState) emptyState.style.display = "none";
+
     if (items.length === 0) {
-      body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Aucune opportunité pour ces filtres.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-dim);">Aucun article ne correspond à ces filtres.</td></tr>`;
       return;
     }
 
-    body.innerHTML = items.map((o) => `
-      <tr>
-        <td>${escapeHtml(o.title)}</td>
-        <td>${escapeHtml(o.category)}</td>
-        <td class="mono">${o.price} €</td>
-        <td class="mono" style="color:${o.margin >= 0 ? "#4ade80" : "#f87171"};">${o.margin >= 0 ? "+" : ""}${o.margin}%</td>
-        <td><span class="feed-score" style="width:26px;height:26px;font-size:11px;background:${getScoreHex(o.score)}">${o.score}</span></td>
-      </tr>
-    `).join("");
+    body.innerHTML = items.map((item) => {
+      const { targetPrice, marginEuro, marginPercent } = computeMarginFromDeal(item);
+      const dateStr = item.saved_at ? new Date(item.saved_at).toLocaleDateString("fr-FR") : "-";
+      return `
+        <tr>
+          <td>${escapeHtml(item.title || "Article")}</td>
+          <td>${escapeHtml(item.category || "-")}</td>
+          <td class="mono">${item.price || 0} €</td>
+          <td class="mono">${Math.round(targetPrice)} €</td>
+          <td class="mono" style="color:${marginEuro >= 0 ? "#4ade80" : "#f87171"};">${marginEuro >= 0 ? "+" : ""}${marginEuro} € (${marginPercent >= 0 ? "+" : ""}${marginPercent}%)</td>
+          <td>${dateStr}</td>
+          <td><a href="${item.url || "#"}" target="_blank" rel="noopener" class="table-btn">Voir</a></td>
+        </tr>
+      `;
+    }).join("");
   }
 
-  document.getElementById("filterMargin").addEventListener("change", renderOpportunities);
-  document.getElementById("filterCategory").addEventListener("change", renderOpportunities);
-  renderOpportunities();
-
-  function renderAlertsList() {
-    const container = document.getElementById("alertsList");
-    if (store.alerts.length === 0) {
-      container.innerHTML = `<div style="color:var(--text-dim); font-size:12.5px;">Aucune alerte créée pour le moment.</div>`;
-      return;
+  async function loadRealSavedItems() {
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/deals`, { credentials: "include" });
+      if (!response.ok) return;
+      const data = await response.json();
+      realSavedItems = data.deals || [];
+    } catch (error) {
+      console.warn("[MargeShark] Impossible de charger les articles sauvegardés :", error);
+      realSavedItems = [];
     }
-    const channelIcon = { email: "📧", telegram: "✈️", discord: "🎮" };
-    container.innerHTML = `
-      <div class="section-title" style="margin-bottom:10px;"><span>Mes alertes actives</span></div>
-      ${store.alerts.map((a) => `
-        <div class="feed-item">
-          <div class="feed-info">
-            <div class="feed-title">${channelIcon[a.channel] || "🔔"} ${escapeHtml(a.keywords)}</div>
-            <div class="feed-meta">Marge ≥ ${a.margin}% · Prix ≤ ${a.price}€</div>
-          </div>
-          <button class="table-btn" data-remove-alert="${a.id}">Supprimer</button>
-        </div>
-      `).join("")}
-    `;
-    container.querySelectorAll("[data-remove-alert]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        store.alerts = store.alerts.filter((a) => a.id !== btn.getAttribute("data-remove-alert"));
-        saveStore(store);
-        renderAlertsList();
-        showToast("Alerte supprimée.");
-      });
-    });
+    renderFeed();
+    renderSavedItemsTable();
   }
-  renderAlertsList();
 
-  document.getElementById("createAlertBtn").addEventListener("click", () => {
-    const keywords = document.getElementById("alertKeywords").value.trim();
-    const channel = document.getElementById("alertChannel").value;
-    const margin = parseInt(document.getElementById("alertMargin").value, 10) || 0;
-    const price = parseInt(document.getElementById("alertPrice").value, 10) || 0;
+  const filterMarginEl = document.getElementById("filterMargin");
+  const filterCategoryEl = document.getElementById("filterCategory");
+  if (filterMarginEl) filterMarginEl.addEventListener("change", renderSavedItemsTable);
+  if (filterCategoryEl) filterCategoryEl.addEventListener("change", renderSavedItemsTable);
 
-    if (!keywords) {
-      showToast("Merci de renseigner des mots-clés.");
-      return;
-    }
-
-    store.alerts.unshift({ id: "a" + Date.now(), keywords, channel, margin, price, active: true });
-    saveStore(store);
-    renderAlertsList();
-    document.getElementById("alertKeywords").value = "";
-    document.getElementById("alertMargin").value = "";
-    document.getElementById("alertPrice").value = "";
-    showToast("✅ Alerte créée avec succès.");
-  });
+  loadRealSavedItems();
 
   /* ===================== MARGIN ANALYZER ===================== */
-  document.getElementById("calcRunBtn").addEventListener("click", () => {
-    const name = document.getElementById("calcName").value.trim() || "Cet article";
-    const buy = parseFloat(document.getElementById("calcBuyPrice").value) || 0;
-    const sell = parseFloat(document.getElementById("calcSellPrice").value) || 0;
-    const fees = parseFloat(document.getElementById("calcFees").value) || 0;
-
+  /* ===================== ANALYSEUR PAR URL ===================== */
+  document.getElementById("analyzeUrlBtn").addEventListener("click", async () => {
+    const url = document.getElementById("analyzeUrlInput").value.trim();
+    const licenseKey = document.getElementById("analyzeLicenseInput").value.trim();
+    const fees = parseFloat(document.getElementById("analyzeFeesInput").value) || 0;
+    const btn = document.getElementById("analyzeUrlBtn");
     const resultBody = document.getElementById("calcResultBody");
 
-    if (buy <= 0 || sell <= 0) {
-      resultBody.innerHTML = `<div style="color:#fca5a5;">Merci de renseigner un prix d'achat et un prix de revente valides.</div>`;
+    if (!licenseKey) {
+      resultBody.innerHTML = `<div style="color:#fca5a5;">Merci de renseigner ta clé de licence Requin Tigre ou Grand Blanc ci-dessus.</div>`;
       return;
     }
 
-    const netMargin = sell - buy - fees;
-    const marginPercent = ((netMargin / buy) * 100).toFixed(1);
-    const color = netMargin >= 0 ? "#4ade80" : "#f87171";
+    if (!url || !/^https:\/\/(www\.)?leboncoin\.fr\//i.test(url)) {
+      resultBody.innerHTML = `<div style="color:#fca5a5;">Merci de coller une URL Leboncoin valide (commençant par https://www.leboncoin.fr/).</div>`;
+      return;
+    }
 
-    resultBody.innerHTML = `
-      <div style="font-size:13px; color:var(--text-mid); margin-bottom:14px;">${escapeHtml(name)}</div>
-      <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:6px;">
-        <span class="mono" style="font-size:32px; font-weight:700; color:${color};">${netMargin >= 0 ? "+" : ""}${netMargin.toFixed(2)} €</span>
-        <span class="mono" style="font-size:14px; color:${color};">(${netMargin >= 0 ? "+" : ""}${marginPercent}%)</span>
-      </div>
-      <div style="font-size:11.5px; color:var(--text-dim);">Prix de revente (${sell}€) − Prix d'achat (${buy}€) − Frais (${fees}€)</div>
-    `;
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = "Analyse en cours...";
+    resultBody.innerHTML = `<div class="muted">Récupération et analyse de l'annonce en cours, quelques secondes...</div>`;
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/analyze-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, licenseKey })
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        resultBody.innerHTML = `<div style="color:#fca5a5;">${escapeHtml(data.message || "Impossible d'analyser cette annonce.")}</div>`;
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return;
+      }
+
+      const a = data.analysis;
+      const extracted = data.extractedData || {};
+      const priceNum = typeof extracted.price === "number" ? extracted.price : 0;
+
+      // Extraction d'une fourchette de marché depuis le texte renvoyé par
+      // Gemini (même format que celui utilisé par l'extension), pour calculer
+      // une marge nette avec les frais annexes déduits.
+      const marketMatch = (a.estimation_marche || "").match(/(\d[\d\s]*)\s*€?\s*-\s*(\d[\d\s]*)\s*€/);
+      let netMarginHtml = "";
+      if (marketMatch && priceNum > 0) {
+        const marketMax = parseInt(marketMatch[2].replace(/\s/g, ""), 10);
+        const netMargin = marketMax - priceNum - fees;
+        const netMarginPercent = ((netMargin / priceNum) * 100).toFixed(1);
+        const color = netMargin >= 0 ? "#4ade80" : "#f87171";
+        netMarginHtml = `
+          <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
+            <div class="muted" style="font-size:11.5px; margin-bottom:4px;">Marge nette estimée (frais de ${fees}€ déduits) :</div>
+            <span class="mono" style="font-size:24px; font-weight:700; color:${color};">${netMargin >= 0 ? "+" : ""}${netMargin.toFixed(2)} €</span>
+            <span class="mono" style="font-size:13px; color:${color};"> (${netMargin >= 0 ? "+" : ""}${netMarginPercent}%)</span>
+          </div>
+        `;
+      }
+
+      const redFlagsHtml = (a.red_flags && a.red_flags.length > 0)
+        ? `<div style="margin-top:12px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">⚠️ Points d'attention :</div><ul style="margin:0; padding-left:18px; font-size:12.5px;">${a.red_flags.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul></div>`
+        : "";
+
+      const negotiationHtml = (a.scripts_negociation)
+        ? `<div style="margin-top:12px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">💬 Script de négociation suggéré :</div><div style="font-size:12.5px; font-style:italic;">${escapeHtml(a.scripts_negociation.approche_douce || a.scripts_negociation.approche_rapide || "")}</div></div>`
+        : "";
+
+      resultBody.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="feed-score" style="width:32px;height:32px;font-size:13px;background:${getScoreHex(a.score)}">${a.score}</span>
+          <div style="font-size:13.5px; font-weight:600;">${escapeHtml(extracted.title || "Annonce analysée")}</div>
+        </div>
+        <div class="muted" style="font-size:12px; margin-bottom:8px;">Prix affiché : ${priceNum} € · Estimation marché : ${escapeHtml(a.estimation_marche || "Non disponible")}</div>
+        <div style="font-size:12.5px;">${escapeHtml(a.verdict || "")}</div>
+        ${netMarginHtml}
+        ${redFlagsHtml}
+        ${negotiationHtml}
+      `;
+    } catch (error) {
+      console.warn("[MargeShark] Erreur analyse par URL :", error);
+      resultBody.innerHTML = `<div style="color:#fca5a5;">Impossible de contacter le serveur. Réessaie dans quelques instants.</div>`;
+    }
+
+    btn.disabled = false;
+    btn.textContent = originalText;
   });
 
   /* ===================== API CONFIG ===================== */
@@ -1719,7 +1752,7 @@
     const exportPayload = {
       exported_at: new Date().toISOString(),
       profile: { name: "Mohamed Mechri", email: "mohamed@margeshark.fr" },
-      alerts: store.alerts,
+      saved_items: realSavedItems,
       consents: store.consents,
       invoices: INVOICES,
       note: "Export généré conformément à l'article 20 du RGPD (droit à la portabilité des données)."
@@ -1782,6 +1815,86 @@
   }, 4000);
 
   /* ===================== AUTHENTIFICATION RÉELLE ===================== */
+  /* ===================== LIAISON DE LICENCE ET ANNONCES RÉELLES ===================== */
+
+  async function loadLinkedLicenses() {
+    const listEl = document.getElementById("linkedLicensesList");
+    if (!listEl) return;
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses`, { credentials: "include" });
+      if (!response.ok) return;
+      const data = await response.json();
+
+      if (data.licenses.length === 0) {
+        listEl.innerHTML = '<div class="muted" style="font-size:12px;">Aucune licence reliée pour l\'instant.</div>';
+        return;
+      }
+
+      listEl.innerHTML = data.licenses.map((l) => `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; font-size:12.5px;">
+          <span>${l.product_name || "Licence"} — <span class="muted">${l.license_key.slice(0, 8)}...</span></span>
+          <button class="table-btn unlink-license-btn" data-key="${l.license_key}" style="font-size:11px;">Retirer</button>
+        </div>
+      `).join("");
+
+      listEl.querySelectorAll(".unlink-license-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses/${encodeURIComponent(btn.dataset.key)}`, {
+            method: "DELETE",
+            credentials: "include"
+          });
+          loadLinkedLicenses();
+          loadRealSavedItems();
+        });
+      });
+    } catch (error) {
+      console.warn("[MargeShark] Impossible de charger les licences liées :", error);
+    }
+  }
+
+  const linkLicenseBtn = document.getElementById("linkLicenseBtn");
+  if (linkLicenseBtn) {
+    linkLicenseBtn.addEventListener("click", async () => {
+      const input = document.getElementById("linkLicenseInput");
+      const key = input.value.trim();
+      if (!key) {
+        showToast("Colle d'abord une clé de licence.");
+        return;
+      }
+
+      linkLicenseBtn.disabled = true;
+      linkLicenseBtn.textContent = "...";
+
+      try {
+        const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/link-license`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ licenseKey: key })
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          showToast(`Licence ${data.productName || ""} reliée avec succès.`);
+          input.value = "";
+          loadLinkedLicenses();
+          loadRealSavedItems();
+        } else {
+          showToast(data.message || "Impossible de relier cette licence.");
+        }
+      } catch (error) {
+        console.warn("[MargeShark] Erreur liaison licence :", error);
+        showToast("Impossible de contacter le serveur.");
+      }
+
+      linkLicenseBtn.disabled = false;
+      linkLicenseBtn.textContent = "Relier";
+    });
+  }
+
+  loadLinkedLicenses();
+
   checkAuthOrRedirect();
 
   /* ===================== VÉRIFICATION RÉELLE DU SOLDE DE LICENCE ===================== */
