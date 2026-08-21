@@ -1585,7 +1585,7 @@
     document.getElementById("verifyCodeBtn").addEventListener("click", async () => {
       const email = document.getElementById("loginCodeEmailDisplay").textContent;
       const codeInput = document.getElementById("loginCodeInput");
-      const code = codeInput.value.trim();
+      const code = codeInput.value.replace(/\D/g, "");
       const btn = document.getElementById("verifyCodeBtn");
 
       if (code.length !== 6) {
