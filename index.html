@@ -1601,13 +1601,17 @@
         const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/verify-code`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include", // indispensable pour recevoir le cookie de session
           body: JSON.stringify({ email, code })
         });
         const data = await response.json();
 
         if (response.ok && data.success) {
           btn.textContent = "✓ Connecté";
+          // Le jeton est stocké ici (pas de cookie - voir explication côté
+          // backend) : localStorage est spécifique à ce domaine (margeshark.fr),
+          // donc il persiste bien après la redirection vers espace-client.html
+          // qui est sur le même domaine.
+          localStorage.setItem("margeshark_session_token", data.sessionToken);
           window.location.href = data.redirectUrl || "https://margeshark.fr/espace-client.html";
         } else {
           alert(data.message || "Code incorrect.");

@@ -1166,6 +1166,17 @@
   // ⚠️ À remplacer par l'URL réelle une fois le backend déployé.
   const MARGESHARK_BACKEND_URL = "https://margeshark-production.up.railway.app";
 
+  // Authentification par JETON (pas par cookie) : margeshark.fr et
+  // railway.app sont deux domaines différents, et les navigateurs modernes
+  // bloquent de plus en plus les cookies "tiers" entre domaines différents,
+  // même parfaitement configurés côté serveur. Le jeton est stocké dans
+  // localStorage (déposé par index.html lors de la connexion) et renvoyé
+  // explicitement via l'en-tête Authorization à chaque appel authentifié.
+  function authHeaders(extra = {}) {
+    const token = localStorage.getItem("margeshark_session_token");
+    return { ...extra, Authorization: token ? `Bearer ${token}` : "" };
+  }
+
   // Vérification de connexion réelle au chargement : si aucune session
   // valide n'existe (cookie httpOnly émis par /api/auth/verify), on
   // redirige vers le site pour se reconnecter, plutôt que d'afficher un
@@ -1175,7 +1186,7 @@
   async function checkAuthOrRedirect() {
     try {
       const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/me`, {
-        credentials: "include" // indispensable pour envoyer le cookie de session cross-origin
+        headers: authHeaders()
       });
 
       if (!response.ok) {
@@ -1209,11 +1220,12 @@
     try {
       await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/logout`, {
         method: "POST",
-        credentials: "include"
+        headers: authHeaders()
       });
     } catch (error) {
       console.warn("[MargeShark] Erreur lors de la déconnexion :", error);
     }
+    localStorage.removeItem("margeshark_session_token");
     window.location.href = "https://margeshark.fr/";
   }
 
@@ -1431,7 +1443,7 @@
 
   async function loadRealSavedItems() {
     try {
-      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/deals`, { credentials: "include" });
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/deals`, { headers: authHeaders() });
       if (!response.ok) return;
       const data = await response.json();
       realSavedItems = data.deals || [];
@@ -1697,7 +1709,7 @@
     if (!listEl) return;
 
     try {
-      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses`, { credentials: "include" });
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses`, { headers: authHeaders() });
       if (!response.ok) return;
       const data = await response.json();
 
@@ -1717,7 +1729,7 @@
         btn.addEventListener("click", async () => {
           await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses/${encodeURIComponent(btn.dataset.key)}`, {
             method: "DELETE",
-            credentials: "include"
+            headers: authHeaders()
           });
           loadLinkedLicenses();
           loadRealSavedItems();
@@ -1744,8 +1756,7 @@
       try {
         const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/link-license`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: authHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({ licenseKey: key })
         });
         const data = await response.json();
