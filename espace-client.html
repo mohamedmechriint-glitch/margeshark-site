@@ -772,7 +772,6 @@
     <nav class="sidebar-nav">
       <button class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Tableau de bord</span></button>
       <button class="nav-item" data-view="alerts"><span class="nav-icon">📦</span><span class="nav-label">Articles sauvegardés</span></button>
-      <button class="nav-item" data-view="analyzer"><span class="nav-icon">🧮</span><span class="nav-label">Analyseur de Marge</span></button>
       <button class="nav-item" data-view="apiconfig"><span class="nav-icon">🔑</span><span class="nav-label">Clé API Gemini</span></button>
       <button class="nav-item" data-view="billing"><span class="nav-icon">💳</span><span class="nav-label">Abonnement &amp; Facturation</span></button>
       <button class="nav-item" data-view="gdpr"><span class="nav-icon">🛡️</span><span class="nav-label">RGPD &amp; Données</span></button>
@@ -909,39 +908,6 @@
           <div id="savedItemsEmpty" class="muted" style="text-align:center; padding:30px 0; display:none;">
             Aucun article sauvegardé pour l'instant. Utilise le bouton « 💾 Sauvegarder » depuis l'extension sur une annonce Leboncoin pour la retrouver ici.
           </div>
-        </div>
-      </section>
-
-      <!-- ===================== VIEW: ANALYZER ===================== -->
-      <section class="view" id="view-analyzer">
-        <div class="view-header">
-          <h1>Analyseur de Marge</h1>
-          <p>Colle le lien d'une annonce Leboncoin pour obtenir la même analyse que sur l'extension, directement ici.</p>
-        </div>
-
-        <div class="glass-card mb-section">
-          <div class="section-title"><span>🔗 Analyser une annonce</span></div>
-          <div class="form-group">
-            <label class="form-label">Ta clé de licence (Requin Tigre ou Grand Blanc)</label>
-            <input type="text" class="form-input" id="analyzeLicenseInput" placeholder="Coller ta clé de licence..." />
-          </div>
-          <div class="form-row" style="align-items:flex-end;">
-            <div class="form-group" style="flex:1; margin-bottom:0;">
-              <label class="form-label">URL de l'annonce Leboncoin</label>
-              <input type="text" class="form-input" id="analyzeUrlInput" placeholder="https://www.leboncoin.fr/..." />
-            </div>
-            <div class="form-group" style="width:160px; margin-bottom:0;">
-              <label class="form-label">Frais annexes (€)</label>
-              <input type="number" class="form-input" id="analyzeFeesInput" placeholder="0" value="0" min="0" />
-            </div>
-            <button class="btn btn-teal" id="analyzeUrlBtn" style="height:42px;">Analyser</button>
-          </div>
-          <div class="form-hint" style="margin-top:10px;">Les frais annexes (livraison, remise en état...) sont déduits de la marge calculée ci-dessous, une fois l'analyse reçue.</div>
-        </div>
-
-        <div class="glass-card" id="calcResultCard">
-          <div class="section-title"><span>📈 Résultat</span></div>
-          <div id="calcResultBody" style="color: var(--text-dim); font-size: 13px;">Colle le lien d'une annonce ci-dessus et clique sur « Analyser » pour voir le résultat ici.</div>
         </div>
       </section>
 
@@ -1325,7 +1291,6 @@
   const VIEW_TITLES = {
     dashboard: "Tableau de bord",
     alerts: "Articles sauvegardés",
-    analyzer: "Analyseur de Marge",
     apiconfig: "Configuration IA & Clé API",
     billing: "Abonnement & Facturation",
     gdpr: "Espace RGPD & Confidentialité",
@@ -1484,96 +1449,6 @@
   if (filterCategoryEl) filterCategoryEl.addEventListener("change", renderSavedItemsTable);
 
   loadRealSavedItems();
-
-  /* ===================== MARGIN ANALYZER ===================== */
-  /* ===================== ANALYSEUR PAR URL ===================== */
-  document.getElementById("analyzeUrlBtn").addEventListener("click", async () => {
-    const url = document.getElementById("analyzeUrlInput").value.trim();
-    const licenseKey = document.getElementById("analyzeLicenseInput").value.trim();
-    const fees = parseFloat(document.getElementById("analyzeFeesInput").value) || 0;
-    const btn = document.getElementById("analyzeUrlBtn");
-    const resultBody = document.getElementById("calcResultBody");
-
-    if (!licenseKey) {
-      resultBody.innerHTML = `<div style="color:#fca5a5;">Merci de renseigner ta clé de licence Requin Tigre ou Grand Blanc ci-dessus.</div>`;
-      return;
-    }
-
-    if (!url || !/^https:\/\/(www\.)?leboncoin\.fr\//i.test(url)) {
-      resultBody.innerHTML = `<div style="color:#fca5a5;">Merci de coller une URL Leboncoin valide (commençant par https://www.leboncoin.fr/).</div>`;
-      return;
-    }
-
-    btn.disabled = true;
-    const originalText = btn.textContent;
-    btn.textContent = "Analyse en cours...";
-    resultBody.innerHTML = `<div class="muted">Récupération et analyse de l'annonce en cours, quelques secondes...</div>`;
-
-    try {
-      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/analyze-url`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, licenseKey })
-      });
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        resultBody.innerHTML = `<div style="color:#fca5a5;">${escapeHtml(data.message || "Impossible d'analyser cette annonce.")}</div>`;
-        btn.disabled = false;
-        btn.textContent = originalText;
-        return;
-      }
-
-      const a = data.analysis;
-      const extracted = data.extractedData || {};
-      const priceNum = typeof extracted.price === "number" ? extracted.price : 0;
-
-      // Extraction d'une fourchette de marché depuis le texte renvoyé par
-      // Gemini (même format que celui utilisé par l'extension), pour calculer
-      // une marge nette avec les frais annexes déduits.
-      const marketMatch = (a.estimation_marche || "").match(/(\d[\d\s]*)\s*€?\s*-\s*(\d[\d\s]*)\s*€/);
-      let netMarginHtml = "";
-      if (marketMatch && priceNum > 0) {
-        const marketMax = parseInt(marketMatch[2].replace(/\s/g, ""), 10);
-        const netMargin = marketMax - priceNum - fees;
-        const netMarginPercent = ((netMargin / priceNum) * 100).toFixed(1);
-        const color = netMargin >= 0 ? "#4ade80" : "#f87171";
-        netMarginHtml = `
-          <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
-            <div class="muted" style="font-size:11.5px; margin-bottom:4px;">Marge nette estimée (frais de ${fees}€ déduits) :</div>
-            <span class="mono" style="font-size:24px; font-weight:700; color:${color};">${netMargin >= 0 ? "+" : ""}${netMargin.toFixed(2)} €</span>
-            <span class="mono" style="font-size:13px; color:${color};"> (${netMargin >= 0 ? "+" : ""}${netMarginPercent}%)</span>
-          </div>
-        `;
-      }
-
-      const redFlagsHtml = (a.red_flags && a.red_flags.length > 0)
-        ? `<div style="margin-top:12px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">⚠️ Points d'attention :</div><ul style="margin:0; padding-left:18px; font-size:12.5px;">${a.red_flags.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul></div>`
-        : "";
-
-      const negotiationHtml = (a.scripts_negociation)
-        ? `<div style="margin-top:12px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">💬 Script de négociation suggéré :</div><div style="font-size:12.5px; font-style:italic;">${escapeHtml(a.scripts_negociation.approche_douce || a.scripts_negociation.approche_rapide || "")}</div></div>`
-        : "";
-
-      resultBody.innerHTML = `
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-          <span class="feed-score" style="width:32px;height:32px;font-size:13px;background:${getScoreHex(a.score)}">${a.score}</span>
-          <div style="font-size:13.5px; font-weight:600;">${escapeHtml(extracted.title || "Annonce analysée")}</div>
-        </div>
-        <div class="muted" style="font-size:12px; margin-bottom:8px;">Prix affiché : ${priceNum} € · Estimation marché : ${escapeHtml(a.estimation_marche || "Non disponible")}</div>
-        <div style="font-size:12.5px;">${escapeHtml(a.verdict || "")}</div>
-        ${netMarginHtml}
-        ${redFlagsHtml}
-        ${negotiationHtml}
-      `;
-    } catch (error) {
-      console.warn("[MargeShark] Erreur analyse par URL :", error);
-      resultBody.innerHTML = `<div style="color:#fca5a5;">Impossible de contacter le serveur. Réessaie dans quelques instants.</div>`;
-    }
-
-    btn.disabled = false;
-    btn.textContent = originalText;
-  });
 
   /* ===================== API CONFIG ===================== */
   document.getElementById("testKeyBtn").addEventListener("click", () => {
