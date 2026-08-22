@@ -155,6 +155,14 @@
     },
     {
       "@type": "Question",
+      "name": "MargeShark est-il affilié à Leboncoin ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Non. MargeShark est un outil indépendant, compatible avec Leboncoin.fr, mais n'est ni affilié, ni partenaire, ni approuvé par Leboncoin. C'est une extension tierce qui analyse les annonces que tu consultes déjà, avec l'aide de l'IA Google Gemini."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Ai-je besoin d'une carte bancaire ou d'une clé API ?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -606,6 +614,22 @@
     font-size: 12.5px;
     color: var(--text-dim);
   }
+
+  .compat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-top: 14px;
+  }
+
+  .compat-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
 
   /* ===== SONAR VISUAL ===== */
   .sonar {
@@ -1227,6 +1251,7 @@
           <a class="btn-ghost" href="#comment-ca-marche">Voir comment ça marche</a>
         </div>
         <div class="hero-microcopy">5 analyses gratuites par jour · Aucune carte bancaire requise pour commencer</div>
+        <div class="compat-badge"><span class="dot"></span>Compatible Leboncoin.fr</div>
       </div>
 
       <div class="sonar">
@@ -1420,6 +1445,10 @@
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-4" id="faq-btn-4"><span>L'extension fonctionne-t-elle sur d'autres sites que Leboncoin ?</span><span class="chev" aria-hidden="true">⌄</span></button>
           <div class="faq-a" id="faq-ans-4" role="region" aria-labelledby="faq-btn-4"><div class="faq-a-inner">Pour l'instant, MargeShark est optimisé exclusivement pour Leboncoin. D'autres plateformes pourraient être ajoutées à l'avenir.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-4b" id="faq-btn-4b"><span>MargeShark est-il affilié à Leboncoin ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-4b" role="region" aria-labelledby="faq-btn-4b"><div class="faq-a-inner">Non. MargeShark est un outil indépendant, compatible avec Leboncoin.fr, mais n'est ni affilié, ni partenaire, ni approuvé par Leboncoin. C'est une extension tierce qui analyse les annonces que tu consultes déjà, avec l'aide de l'IA Google Gemini.</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-5" id="faq-btn-5"><span>Ai-je besoin d'une carte bancaire ou d'une clé API ?</span><span class="chev" aria-hidden="true">⌄</span></button>
