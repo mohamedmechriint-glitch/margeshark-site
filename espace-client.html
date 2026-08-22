@@ -1066,15 +1066,13 @@
     <h3 style="color:#fca5a5;">Supprimer définitivement ton compte</h3>
     <p class="modal-sub">Cette action est irréversible.</p>
     <div class="danger-warning-box">
-      En confirmant, ton compte, ton historique d'analyses, tes alertes et tes factures seront supprimés immédiatement et définitivement. Ton abonnement en cours sera résilié sans remboursement de la période déjà payée. Cette action ne peut pas être annulée.
+      En confirmant, ton compte, tes licences liées et tes annonces sauvegardées seront supprimés immédiatement et définitivement. Cette action ne peut pas être annulée.
+      <br /><br />
+      <strong>Si un abonnement Grand Blanc est encore actif, tu dois d'abord le résilier</strong> depuis l'onglet Facturation (portail Lemon Squeezy) - la suppression du compte ne résilie pas automatiquement les abonnements en cours.
     </div>
     <div class="form-group">
       <label class="form-label">Tape <strong>SUPPRIMER</strong> pour confirmer</label>
       <input type="text" class="form-input" id="deleteConfirmInput" placeholder="SUPPRIMER" autocomplete="off" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Mot de passe</label>
-      <input type="password" class="form-input" id="deletePasswordInput" placeholder="••••••••" />
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" data-close-modal="deleteModal">Annuler</button>
@@ -1515,25 +1513,56 @@
   /* ===================== DELETE ACCOUNT MODAL ===================== */
   const deleteModal = document.getElementById("deleteModal");
   const deleteConfirmInput = document.getElementById("deleteConfirmInput");
-  const deletePasswordInput = document.getElementById("deletePasswordInput");
   const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 
   document.getElementById("openDeleteModalBtn").addEventListener("click", () => {
     deleteConfirmInput.value = "";
-    deletePasswordInput.value = "";
     confirmDeleteBtn.disabled = true;
     deleteModal.classList.add("open");
   });
 
   function checkDeleteEnabled() {
-    confirmDeleteBtn.disabled = !(deleteConfirmInput.value.trim() === "SUPPRIMER" && deletePasswordInput.value.length > 0);
+    confirmDeleteBtn.disabled = deleteConfirmInput.value.trim() !== "SUPPRIMER";
   }
   deleteConfirmInput.addEventListener("input", checkDeleteEnabled);
-  deletePasswordInput.addEventListener("input", checkDeleteEnabled);
 
-  confirmDeleteBtn.addEventListener("click", () => {
-    deleteModal.classList.remove("open");
-    showToast("Compte supprimé (action simulée - nécessite une vraie suppression backend + résiliation Lemon Squeezy).");
+  confirmDeleteBtn.addEventListener("click", async () => {
+    confirmDeleteBtn.disabled = true;
+    confirmDeleteBtn.textContent = "Suppression...";
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account`, {
+        method: "DELETE",
+        headers: authHeaders()
+      });
+      const data = await response.json();
+
+      if (response.status === 409) {
+        // Abonnement Grand Blanc encore actif - suppression bloquée
+        // volontairement (voir route-account.js).
+        deleteModal.classList.remove("open");
+        showToast("⚠️ " + data.message);
+        return;
+      }
+
+      if (!response.ok) {
+        showToast("❌ " + (data.message || "Impossible de supprimer le compte pour le moment."));
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.textContent = "Supprimer mon compte";
+        return;
+      }
+
+      deleteModal.classList.remove("open");
+      localStorage.removeItem("margeshark_session_token");
+      showToast("✅ Compte supprimé.");
+      setTimeout(() => {
+        window.location.href = "https://margeshark.fr";
+      }, 1500);
+    } catch (error) {
+      showToast("❌ Erreur réseau - le compte n'a pas été supprimé.");
+      confirmDeleteBtn.disabled = false;
+      confirmDeleteBtn.textContent = "Supprimer mon compte";
+    }
   });
 
   document.getElementById("saveProfileBtn").addEventListener("click", async () => {
