@@ -107,6 +107,14 @@
     },
     {
       "@type": "Question",
+      "name": "Où puis-je télécharger l'extension ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MargeShark est actuellement en cours de revue sur le Chrome Web Store, une étape obligatoire imposée par Google pour toute nouvelle extension. Elle sera disponible en téléchargement public dès cette revue terminée - inscris-toi via le bouton \"Installer l'extension\" pour être informé dès qu'elle est en ligne."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Est-ce que mes données sont envoyées quelque part ?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -142,7 +150,7 @@
       "name": "Que se passe-t-il si je rachète un pack Requin Tigre alors qu'il m'en reste ?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ce cas est encore en cours de finalisation technique. Si tu es concerné, contacte le support avant de racheter un second pack pour être sûr que tes crédits restants seront bien conservés."
+        "text": "Chaque achat génère une clé de licence indépendante avec ses propres crédits, qui ne se combinent pas automatiquement. L'extension utilise une seule clé active à la fois - épuise ton pack en cours avant d'en racheter un nouveau, ou passe sur l'abonnement Grand Blanc si tu analyses très régulièrement."
       }
     },
     {
@@ -616,20 +624,40 @@
   }
 
   .compat-badge {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    font-weight: 700;
-    color: var(--text-dim);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 6px 12px;
+    font-weight: 800;
+    color: #000000;
+    background: #facc15;
+    padding: 6px 14px;
     border-radius: 999px;
     margin-top: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(250, 204, 21, 0.3);
   }
 
-  .compat-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+  .compat-badge::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.85), transparent);
+    transform: skewX(-20deg);
+    animation: compat-shine 2.2s ease-in-out infinite;
+  }
+
+  @keyframes compat-shine {
+    0% { left: -60%; }
+    50% { left: 130%; }
+    100% { left: 130%; }
+  }
+
+  .compat-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #04302c; flex-shrink: 0; }
 
   /* ===== ONBOARDING VISUEL (3 étapes) ===== */
   .onboard-grid {
@@ -671,6 +699,12 @@
     box-shadow: 0 4px 14px rgba(250, 204, 21, 0.3);
   }
 
+  .ov-emoji {
+    color: initial;
+    -webkit-text-fill-color: initial;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  }
+
   .ov-mock-score {
     display: inline-flex;
     align-items: baseline;
@@ -692,44 +726,6 @@
 
   @media (max-width: 800px) {
     .onboard-grid { grid-template-columns: 1fr; }
-  }
-
-  /* ===== COMPARATIF AVANT / APRÈS ===== */
-  .compare-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 32px;
-  }
-
-  .compare-card {
-    border-radius: 16px;
-    padding: 28px;
-    border: 1px solid var(--line);
-  }
-
-  .compare-without {
-    background: rgba(248, 113, 113, 0.05);
-    border-color: rgba(248, 113, 113, 0.25);
-  }
-
-  .compare-with {
-    background: rgba(45, 212, 191, 0.06);
-    border-color: rgba(45, 212, 191, 0.35);
-  }
-
-  .compare-label { font-size: 15px; font-weight: 800; margin-bottom: 16px; }
-
-  .compare-price { font-size: 30px; font-weight: 900; margin-bottom: 12px; }
-  .compare-without .compare-price { color: #f87171; }
-  .compare-with .compare-price { color: #e2e8f0; }
-  .compare-target { font-size: 16px; font-weight: 800; color: #4ade80; }
-
-  .compare-body p { font-size: 14px; line-height: 1.65; color: var(--text-dim); }
-  .compare-body strong { color: #f1f5f9; }
-
-  @media (max-width: 800px) {
-    .compare-grid { grid-template-columns: 1fr; }
   }
 
   /* ===== SONAR VISUAL ===== */
@@ -1018,13 +1014,14 @@
     position: absolute;
     top: -13px;
     right: 24px;
-    background: rgba(10, 26, 48, 0.9);
-    border: 1.5px solid rgba(45, 212, 191, 0.5);
-    color: var(--teal);
+    background: #facc15;
+    border: 1.5px solid #facc15;
+    color: #000000;
     font-size: 11px;
     font-weight: 800;
     padding: 5px 12px;
     border-radius: 999px;
+    box-shadow: 0 3px 10px rgba(250, 204, 21, 0.35);
   }
 
   .price-tier-name {
@@ -1277,119 +1274,6 @@
   }
 
   .cta-trust-item .ck { color: var(--teal); }
-  /* ===== JAUGE INTERACTIVE (démo site) ===== */
-  .gauge-demo-box {
-    max-width: 640px;
-    margin: 40px auto 0;
-    background: rgba(15, 35, 64, 0.5);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 32px;
-  }
-
-  .gauge-demo-header { text-align: center; margin-bottom: 28px; }
-  .gauge-demo-item { font-size: 14px; color: var(--text-dim); font-weight: 600; }
-
-  .gauge-demo-track-wrap { margin-bottom: 28px; }
-
-  .gauge-demo-track {
-    position: relative;
-    height: 12px;
-    border-radius: 999px;
-    display: flex;
-    overflow: visible;
-    margin-bottom: 30px;
-  }
-
-  .gauge-demo-zone { height: 100%; }
-  .gz-green { width: 30%; background: #4ade80; border-radius: 999px 0 0 999px; }
-  .gz-yellow { width: 40%; background: #fbbf24; }
-  .gz-red { width: 30%; background: #f87171; border-radius: 0 999px 999px 0; }
-
-  .gauge-demo-cursor {
-    position: absolute;
-    top: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #0f172a;
-    border: 3px solid #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    transform: translate(-50%, -50%);
-    transition: left 0.15s ease;
-    left: 11.5%;
-  }
-
-  .gauge-demo-badge-row { position: relative; height: 26px; margin-bottom: 6px; }
-
-  .gauge-demo-badge {
-    position: absolute;
-    top: 0;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font-size: 13px;
-    font-weight: 800;
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: rgba(74, 222, 128, 0.18);
-    color: #4ade80;
-    transition: left 0.15s ease;
-    left: 15%;
-  }
-
-  .gauge-demo-legend {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    font-size: 12px;
-    color: var(--text-dim);
-    font-weight: 600;
-  }
-
-  .gauge-demo-slider-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-  }
-
-  .gauge-demo-slider-label { font-size: 13px; color: var(--text-dim); font-weight: 700; flex-shrink: 0; }
-
-  .gauge-demo-slider {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.12);
-    outline: none;
-  }
-  .gauge-demo-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--teal);
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(45, 212, 191, 0.5);
-  }
-  .gauge-demo-slider::-moz-range-thumb {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--teal);
-    cursor: pointer;
-    border: none;
-  }
-
-  .gauge-demo-slider-value {
-    font-size: 15px;
-    font-weight: 800;
-    color: #f1f5f9;
-    width: 60px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
   /* ===== APERÇU MESSAGE DE NÉGOCIATION ===== */
   .nego-preview-box {
     max-width: 480px;
@@ -1459,7 +1343,7 @@
 
   .nego-approach-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
 
-  .nego-product-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  .nego-product-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
   .nego-product-tab {
     padding: 9px 18px;
     border-radius: 999px;
@@ -1486,6 +1370,7 @@
   }
   .dd-product-insight-title { font-size: 13px; font-weight: 800; color: #fbbf24; margin-bottom: 6px; }
   .dd-product-insight-text { font-size: 13.5px; line-height: 1.55; color: #cbd5e1; margin: 0 0 8px 0; }
+  .dd-product-insight-tip { font-size: 12.5px; line-height: 1.5; color: #2dd4bf; font-weight: 600; margin: 0 0 8px 0; }
   .dd-product-insight-disclaimer { font-size: 10.5px; color: #64748b; font-style: italic; }
 
   .nego-compat-note {
@@ -1635,7 +1520,7 @@
         </div>
         <div class="onboard-step">
           <div class="onboard-visual">
-            <div class="ov-mock-pill">Analyser <span>🦈</span></div>
+            <div class="ov-mock-pill">Analyser <span class="ov-emoji">🦈</span></div>
           </div>
           <h3>Ouvre n'importe quelle annonce</h3>
           <p>Sur Leboncoin, une bulle "Analyser" apparaît. Tu décides quand la lancer - rien ne se déclenche tout seul.</p>
@@ -1646,32 +1531,6 @@
           </div>
           <h3>Obtiens ton analyse instantanément</h3>
           <p>Score, marge, red flags et message de négociation prêt à copier - directement sur la page.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section deep" id="preuve-visuelle">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="section-eyebrow">// AVANT / APRÈS</span>
-        <h2>La différence, en une annonce</h2>
-      </div>
-
-      <div class="compare-grid">
-        <div class="compare-card compare-without">
-          <div class="compare-label">😬 Sans MargeShark</div>
-          <div class="compare-body">
-            <div class="compare-price">80 €</div>
-            <p>Tu achètes ce moteur électrique en pensant faire une bonne affaire - sans vraiment savoir si le prix est correct, ni ce qu'il faut vérifier avant de payer.</p>
-          </div>
-        </div>
-        <div class="compare-card compare-with">
-          <div class="compare-label">🦈 Avec MargeShark</div>
-          <div class="compare-body">
-            <div class="compare-price">80 € <span class="compare-target">→ cible 45 €</span></div>
-            <p>L'IA te montre qu'il vaut <strong>60 € max</strong> sur le marché, te dit de <strong>vérifier les bobinages</strong> (panne connue sur ce modèle), et génère le message exact pour l'obtenir à 45 €.</p>
-          </div>
         </div>
       </div>
     </div>
@@ -1711,18 +1570,22 @@
       <div class="section-head">
         <span class="section-eyebrow">// PRÊT À COPIER</span>
         <h2>Le message qui fait baisser le prix</h2>
-        <p>Trois approches, un message tout prêt pour chacune - qui s'appuient sur les vrais défauts connus du produit, pas des formules toutes faites.</p>
+        <p>Le vendeur ne te dira jamais ça spontanément. Trois messages prêts à copier, qui s'appuient sur de vrais pièges connus - pas des formules bateau.</p>
       </div>
 
       <div class="nego-product-tabs">
         <button class="nego-product-tab active" data-product="voiture">🚗 Voiture</button>
-        <button class="nego-product-tab" data-product="ps5">🎮 PS5</button>
-        <button class="nego-product-tab" data-product="iphone">📱 iPhone</button>
+        <button class="nego-product-tab" data-product="trottinette">🛴 Trottinette</button>
+        <button class="nego-product-tab" data-product="appareilphoto">📸 Appareil photo</button>
+        <button class="nego-product-tab" data-product="moto">🏍️ Moto</button>
+        <button class="nego-product-tab" data-product="pcgaming">💻 PC gaming</button>
+        <button class="nego-product-tab" data-product="bijou">💍 Bijou en or</button>
       </div>
 
       <div class="dd-product-insight" style="max-width:640px;margin:0 auto 20px;">
-        <div class="dd-product-insight-title">⚠️ Défauts connus & pièges à éviter</div>
+        <div class="dd-product-insight-title">⚠️ Ce que le vendeur ne te dira jamais</div>
         <p class="dd-product-insight-text" id="negoInsightText">Courroie de distribution à prévoir vers 160 000 km si jamais changée - à vérifier dans le carnet d'entretien. Embrayage à tester à l'essai.</p>
+        <p class="dd-product-insight-tip" id="negoInsightTip">💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.</p>
         <div class="dd-product-insight-disclaimer">Basé sur les connaissances générales de l'IA (pas de recherche en temps réel).</div>
       </div>
 
@@ -1749,43 +1612,6 @@
       </div>
 
       <p class="nego-compat-note">🦈 Fonctionne sur toutes les catégories d'annonces - high-tech, électroménager, véhicules, mobilier, et bien plus.</p>
-    </div>
-  </section>
-
-  <section class="section mid" id="jauge-demo">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="section-eyebrow">// ESSAIE-LA TOI-MÊME</span>
-        <h2>La jauge qui te dit tout, d'un coup d'œil</h2>
-        <p>Bouge le curseur pour voir comment MargeShark évalue un prix par rapport au marché - exactement ce que tu verras sur chaque annonce.</p>
-      </div>
-
-      <div class="gauge-demo-box">
-        <div class="gauge-demo-header">
-          <span class="gauge-demo-item">🚲 Vélo électrique - marché estimé 420€ - 480€</span>
-        </div>
-
-        <div class="gauge-demo-track-wrap">
-          <div class="gauge-demo-track">
-            <div class="gauge-demo-zone gz-green"></div>
-            <div class="gauge-demo-zone gz-yellow"></div>
-            <div class="gauge-demo-zone gz-red"></div>
-            <div class="gauge-demo-cursor" id="gaugeCursor"></div>
-          </div>
-          <div class="gauge-demo-badge-row">
-            <span class="gauge-demo-badge" id="gaugeBadge">350 € • 🔥 -70 € sous le marché</span>
-          </div>
-          <div class="gauge-demo-legend">
-            <span>🟢 Affaire</span><span>🟡 Marché</span><span>🔴 Surévalué</span>
-          </div>
-        </div>
-
-        <div class="gauge-demo-slider-row">
-          <span class="gauge-demo-slider-label">Prix testé</span>
-          <input type="range" min="280" max="620" value="350" id="gaugeSlider" class="gauge-demo-slider" />
-          <span class="gauge-demo-slider-value" id="gaugeSliderValue">350 €</span>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1871,7 +1697,7 @@
         </div>
 
         <div class="price-card premium">
-          <div class="price-badge">LE PLUS CHASSEUR</div>
+          <div class="price-badge">MAXIMUM DE MARGE</div>
           <div class="price-tier-name">🦈 Grand Blanc</div>
           <div class="price-amount">19,99€<span class="per"> / mois</span></div>
           <div class="price-desc">Pour les flippers réguliers et les gros volumes.</div>
@@ -1902,6 +1728,10 @@
           <div class="faq-a" id="faq-ans-0" role="region" aria-labelledby="faq-btn-0"><div class="faq-a-inner"><strong>Gratuit</strong> : 5 analyses par jour, avec ta propre clé Gemini gratuite. <strong>🐅 Requin Tigre</strong> (14,99€) : 500 analyses en achat unique, sans engagement, valables sans limite de temps - tu n'as même plus besoin de ta propre clé API. <strong>🦈 Grand Blanc</strong> (19,99€/mois) : 2000 analyses par mois, abonnement sans engagement. En résumé : teste gratuitement, prends Requin Tigre si tu veux un coup de pouce ponctuel, ou Grand Blanc si tu analyses beaucoup d'annonces chaque mois sur la durée.</div></div>
         </div>
         <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-0b" id="faq-btn-0b"><span>Où puis-je télécharger l'extension ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-0b" role="region" aria-labelledby="faq-btn-0b"><div class="faq-a-inner">MargeShark est actuellement en cours de revue sur le Chrome Web Store, une étape obligatoire imposée par Google pour toute nouvelle extension. Elle sera disponible en téléchargement public dès cette revue terminée - clique sur "Installer l'extension" pour être redirigé dès qu'elle est en ligne.</div></div>
+        </div>
+        <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-1" id="faq-btn-1"><span>Est-ce que mes données sont envoyées quelque part ?</span><span class="chev" aria-hidden="true">⌄</span></button>
           <div class="faq-a" id="faq-ans-1" role="region" aria-labelledby="faq-btn-1"><div class="faq-a-inner">En version gratuite, le titre, le prix et la description de l'annonce sont envoyés directement à l'IA (Google Gemini) depuis ton navigateur, avec ta propre clé API stockée localement, jamais transmise à un serveur MargeShark. Pour les offres Requin Tigre et Grand Blanc, ces mêmes données transitent par le serveur MargeShark (qui détient sa propre clé Gemini payante) avant d'être envoyées à l'IA - aucune donnée de paiement ne transite jamais par ce serveur, uniquement les informations de l'annonce en cours d'analyse.</div></div>
         </div>
@@ -1919,7 +1749,7 @@
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-3b" id="faq-btn-3b"><span>Que se passe-t-il si je rachète un pack Requin Tigre alors qu'il m'en reste ?</span><span class="chev" aria-hidden="true">⌄</span></button>
-          <div class="faq-a" id="faq-ans-3b" role="region" aria-labelledby="faq-btn-3b"><div class="faq-a-inner">C'est un cas encore en cours de finalisation technique de notre côté. Si tu es concerné, contacte le support avant de racheter un second pack pour être sûr que tes crédits restants seront bien conservés.</div></div>
+          <div class="faq-a" id="faq-ans-3b" role="region" aria-labelledby="faq-btn-3b"><div class="faq-a-inner">Chaque achat génère une clé de licence indépendante avec ses propres crédits, qui ne se combinent pas automatiquement. L'extension utilise une seule clé active à la fois - épuise ton pack en cours avant d'en racheter un nouveau, ou passe sur l'abonnement Grand Blanc si tu analyses très régulièrement.</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-4" id="faq-btn-4"><span>L'extension fonctionne-t-elle sur d'autres sites que Leboncoin ?</span><span class="chev" aria-hidden="true">⌄</span></button>
@@ -2144,94 +1974,79 @@
       document.getElementById("loginCodeInput").value = "";
     });
 
-    /* ===== JAUGE INTERACTIVE ===== */
-    (function () {
-      const MARKET_LOW = 420;
-      const MARKET_HIGH = 480;
-      const GREEN_END = 30;
-      const YELLOW_END = 70;
-
-      function priceToPct(price) {
-        if (price <= MARKET_LOW) {
-          const floor = MARKET_LOW * 0.6;
-          const ratio = (price - floor) / (MARKET_LOW - floor);
-          return Math.max(0, Math.min(1, ratio)) * GREEN_END;
-        }
-        if (price >= MARKET_HIGH) {
-          const ceiling = MARKET_HIGH * 1.4;
-          const ratio = (price - MARKET_HIGH) / (ceiling - MARKET_HIGH);
-          return YELLOW_END + Math.max(0, Math.min(1, ratio)) * (100 - YELLOW_END);
-        }
-        const ratio = (price - MARKET_LOW) / (MARKET_HIGH - MARKET_LOW);
-        return GREEN_END + ratio * (YELLOW_END - GREEN_END);
-      }
-
-      function updateGauge(price) {
-        const cursorPos = priceToPct(price);
-        const badgePos = Math.min(85, Math.max(15, cursorPos));
-
-        document.getElementById("gaugeCursor").style.left = cursorPos.toFixed(1) + "%";
-        const badge = document.getElementById("gaugeBadge");
-        badge.style.left = badgePos.toFixed(1) + "%";
-
-        let text, className;
-        if (price < MARKET_LOW) {
-          const delta = Math.round(MARKET_LOW - price);
-          text = `${price} € • 🔥 -${delta} € sous le marché`;
-          className = "gauge-demo-badge";
-          badge.style.background = "rgba(74, 222, 128, 0.18)";
-          badge.style.color = "#4ade80";
-        } else if (price > MARKET_HIGH) {
-          text = `${price} €`;
-          badge.style.background = "rgba(248, 113, 113, 0.18)";
-          badge.style.color = "#f87171";
-        } else {
-          text = `${price} € • prix du marché`;
-          badge.style.background = "rgba(251, 191, 36, 0.18)";
-          badge.style.color = "#fbbf24";
-        }
-        badge.textContent = text;
-        document.getElementById("gaugeSliderValue").textContent = price + " €";
-      }
-
-      const slider = document.getElementById("gaugeSlider");
-      if (slider) {
-        slider.addEventListener("input", (e) => updateGauge(parseInt(e.target.value, 10)));
-        updateGauge(parseInt(slider.value, 10));
-      }
-    })();
-
     /* ===== APERÇU MESSAGE DE NÉGOCIATION (3 produits sélectionnables) ===== */
     (function () {
       const PRODUCTS = {
         voiture: {
-          sub: "Peugeot 208 essence - 8 ans, 95 000 km · 6 500 €",
+          sub: "Mercedes Classe E 220d - 9 ans, 130 000 km · 15 000 €",
           seller: "Julien",
-          insight: "Courroie de distribution à prévoir vers 160 000 km si jamais changée - à vérifier dans le carnet d'entretien. Embrayage à tester à l'essai.",
+          price: 15000,
+          insight: "Ce fameux confort \"tapis volant\" Mercedes peut te coûter jusqu'à 3000€ par coin de réparation. Sur cette génération, les coussins de la suspension pneumatique commencent à fuir après 8-10 ans - et le vendeur ne le mentionnera jamais spontanément. Un seul geste suffit pour le savoir : regarde si la voiture s'est affaissée après une nuit sans rouler.",
+          tip: "💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.",
           messages: {
-            rapide: "Bonjour, je suis intéressé et disponible pour venir voir le véhicule rapidement, au prix affiché. Est-il toujours disponible ?",
-            doux: "Bonjour, votre annonce m'intéresse. Avez-vous le carnet d'entretien avec la date du dernier changement de courroie de distribution ? Seriez-vous ouvert à 5 900€ pour tenir compte de cette vérification à prévoir ?",
-            agressif: "Bonjour, à ce kilométrage la courroie de distribution et l'embrayage sont probablement à prévoir à court terme - des réparations coûteuses. Je vous propose 5 200€, disponible pour venir aujourd'hui."
+            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir voir le véhicule rapidement, au prix affiché. Est-il toujours disponible ?", target: 15000 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Avez-vous remarqué si la voiture s'affaisse légèrement après une nuit sans rouler ? C'est souvent le signe d'une suspension pneumatique qui commence à fuir sur ce modèle. Seriez-vous ouvert à 13 500€ ?", target: 13500 },
+            agressif: { text: "Bonjour, sur cette génération la suspension pneumatique commence souvent à fuir après 8-10 ans - un remplacement à 1500-3000€ par coin si c'est le cas. Je vous propose 12 000€, disponible pour venir aujourd'hui.", target: 12000 }
           }
         },
-        ps5: {
-          sub: "PlayStation 5 édition standard - 3 ans · 280 €",
-          seller: "Karim",
-          insight: "Certains lecteurs de disque des premières générations PS5 montrent des erreurs de lecture après quelques années d'usage intensif - à tester avec un disque avant achat.",
+        trottinette: {
+          sub: "Trottinette électrique 25km/h - 1 an · 250 €",
+          seller: "Manon",
+          price: 250,
+          insight: "Tu peux payer 250€, te faire arrêter par la police deux semaines plus tard, et perdre à la fois la trottinette ET ton argent - sans aucun recours. Une part importante des trottinettes d'occasion sont en réalité volées. Le seul rempart : vérifier le numéro de série sur un registre national avant même de te déplacer.",
+          tip: "💡 Conseil : demande le numéro de série par message et vérifie-le AVANT de te déplacer.",
           messages: {
-            rapide: "Bonjour, je suis intéressé et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?",
-            doux: "Bonjour, votre annonce m'intéresse. Le lecteur de disque fonctionne-t-il encore bien ? Certaines PS5 de cet âge ont des soucis à ce niveau. Seriez-vous ouvert à 245€ ?",
-            agressif: "Bonjour, les PS5 de cette génération ont des lecteurs de disque connus pour s'user avec le temps - un risque réel à ce prix. Je vous propose 215€, disponible aujourd'hui."
+            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 250 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Auriez-vous la facture d'achat d'origine ou le numéro de série pour que je puisse vérifier qu'elle n'est pas déclarée volée ? Seriez-vous ouvert à 210€ ?", target: 210 },
+            agressif: { text: "Bonjour, je n'achète que sur présentation de la facture d'origine - trop de trottinettes d'occasion sont volées et confisquées après coup, sans remboursement. Je vous propose 180€, facture à l'appui.", target: 180 }
           }
         },
-        iphone: {
-          sub: "iPhone 12 128Go - 4 ans · 320 €",
-          seller: "Léa",
-          insight: "À cet âge, la batterie est généralement descendue sous 80% de capacité maximale (vérifiable dans Réglages > Batterie) - une usure normale mais à négocier.",
+        appareilphoto: {
+          sub: "Appareil photo hybride 24MP + objectif - 3 ans · 450 €",
+          seller: "Thomas",
+          price: 450,
+          insight: "\"Très peu servi\", vraiment ? Beaucoup de vendeurs mentent sans même s'en rendre compte sur l'usure réelle de leur appareil. La bonne nouvelle : un simple site gratuit démasque le mensonge en 2 minutes, à partir d'UNE seule photo envoyée par message.",
+          tip: "💡 Conseil : demande cette photo par message, avant même de prendre rendez-vous.",
           messages: {
-            rapide: "Bonjour, je suis intéressée et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?",
-            doux: "Bonjour, votre annonce m'intéresse. Pourriez-vous me dire le pourcentage de santé de la batterie (dans Réglages) ? Seriez-vous ouvert à 285€ si elle est en dessous de 85% ?",
-            agressif: "Bonjour, à 4 ans la batterie est très probablement sous 80% de capacité - une usure normale mais qui justifie une remise. Je vous propose 250€, disponible aujourd'hui."
+            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 450 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Pourriez-vous m'envoyer une photo prise avec l'appareil ? Un site gratuit permet de connaître le nombre réel de photos prises, pour confirmer l'état annoncé. Seriez-vous ouvert à 390€ ?", target: 390 },
+            agressif: { text: "Bonjour, sans vérifier le nombre réel de photos prises (possible en 2 minutes à partir d'une seule photo, via un site gratuit), impossible de confirmer qu'il est vraiment \"très peu servi\". Je vous propose 340€, sous réserve de cette vérification.", target: 340 }
+          }
+        },
+        moto: {
+          sub: "Moto 125cc - 5 ans, 12 000 km · 3 200 €",
+          seller: "Yanis",
+          price: 3200,
+          insight: "Un cadre légèrement tordu, invisible à l'œil nu, peut te faire perdre le contrôle en pleine courbe à 90 km/h. Beaucoup de motos accidentées sont réparées en apparence, puis revendues sans jamais être déclarées à l'assurance. Un seul réflexe : l'historique Histovec, gratuit, avant de signer quoi que ce soit.",
+          tip: "💡 Conseil : demande la plaque d'immatriculation par message, puis vérifie sur Histovec.fr (gratuit, 2 minutes) avant de te déplacer.",
+          messages: {
+            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la voir rapidement, au prix affiché. Est-elle toujours disponible ?", target: 3200 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Avez-vous l'historique Histovec du véhicule ? Je veux m'assurer qu'elle n'a jamais eu de sinistre non déclaré. Seriez-vous ouvert à 2 850€ ?", target: 2850 },
+            agressif: { text: "Bonjour, je n'achète qu'après vérification de l'historique Histovec - trop de motos accidentées sont réparées puis revendues sans déclaration. Je vous propose 2 500€, sous réserve de ce contrôle.", target: 2500 }
+          }
+        },
+        pcgaming: {
+          sub: "PC portable gaming RTX - 2 ans · 750 €",
+          seller: "Enzo",
+          price: 750,
+          insight: "\"Comme neuf\" peut en réalité cacher des mois entiers à tourner à fond, 24h/24, pour miner de la cryptomonnaie - la carte graphique en ressort usée bien plus vite qu'un usage normal ne le laisserait penser. Un logiciel gratuit dévoile la vérité en 2 minutes, en direct devant toi.",
+          tip: "💡 Conseil : demande à voir HWiNFO (gratuit) tourner en direct sur place avant de payer.",
+          messages: {
+            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 750 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Le PC a-t-il déjà servi au minage de cryptomonnaie ? Ça use la carte graphique bien plus vite qu'un usage normal. Seriez-vous ouvert à 640€ ?", target: 640 },
+            agressif: { text: "Bonjour, sans certitude que ce PC n'a jamais servi au minage de cryptomonnaie (très fréquent sur ce type de configuration revendue), je limite mon offre. Je vous propose 560€, sous réserve d'une vérification rapide.", target: 560 }
+          }
+        },
+        bijou: {
+          sub: "Bague en or annoncée 18 carats · 280 €",
+          seller: "Sarah",
+          price: 280,
+          insight: "280€ pour un bijou qui n'est peut-être qu'un vulgaire plaquage doré sur du métal bas de gamme - et souvent, même le vendeur l'ignore. Le test qui ne ment jamais : un simple aimant. L'or véritable n'est jamais magnétique. 5 secondes suffisent pour le savoir.",
+          tip: "💡 Conseil : glisse un petit aimant dans ta poche avant le rendez-vous, ça prend 5 secondes.",
+          messages: {
+            rapide: { text: "Bonjour, je suis intéressée et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 280 },
+            doux: { text: "Bonjour, votre annonce m'intéresse. Accepteriez-vous que je fasse un test rapide à l'aimant sur place avant de payer ? Ça permet de confirmer que ce n'est pas juste un plaquage doré. Seriez-vous ouvert à 230€ ?", target: 230 },
+            agressif: { text: "Bonjour, je n'achète qu'après un test à l'aimant sur place - trop de bijoux \"en or\" ne sont en réalité qu'un plaquage. Je vous propose 190€, sous réserve de ce test très simple.", target: 190 }
           }
         }
       };
@@ -2246,10 +2061,16 @@
       const subEl = document.getElementById("negoProductSub");
       const nameEl = document.getElementById("negoSellerName");
 
+      const fmt = (n) => n.toLocaleString("fr-FR") + " €";
+
+      const tipEl = document.getElementById("negoInsightTip");
+
       function render() {
         const product = PRODUCTS[currentProduct];
-        messageEl.textContent = product.messages[currentApproach];
+        const approach = product.messages[currentApproach];
+        messageEl.textContent = approach.text;
         insightEl.textContent = product.insight;
+        tipEl.textContent = product.tip;
         subEl.textContent = product.sub;
         nameEl.textContent = product.seller;
       }
