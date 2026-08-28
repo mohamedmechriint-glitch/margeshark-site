@@ -1855,10 +1855,11 @@
     window.addEventListener("resize", updateDepthGauge);
     updateDepthGauge();
 
-    // Free install CTA: no Chrome Web Store listing yet, scroll to explain
+    // Free install CTA: pas encore publié sur le Chrome Web Store (en cours
+    // de revue), donc pas de lien direct possible pour l'instant.
     document.getElementById("freeInstallBtn").addEventListener("click", (e) => {
       e.preventDefault();
-      alert("MargeShark n'est pas encore publié sur le Chrome Web Store. En attendant, contacte-nous pour recevoir le fichier d'installation manuelle.");
+      alert("MargeShark est en cours de revue sur le Chrome Web Store - une étape obligatoire imposée par Google. Elle sera disponible très bientôt ! Pour être prévenu dès sa mise en ligne, écris-nous à hello@margeshark.fr.");
     });
 
     // Requin Tigre / Grand Blanc : liens directs vers Lemon Squeezy (voir
