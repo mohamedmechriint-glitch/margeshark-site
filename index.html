@@ -115,6 +115,14 @@
     },
     {
       "@type": "Question",
+      "name": "Puis-je utiliser MargeShark sur mon téléphone ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui, via une app web installable (PWA) plutôt que l'extension - les extensions Chrome n'existent pas sur mobile. Sur MargeShark.fr/app.html, ajoute une capture d'écran de l'annonce et obtiens la même analyse complète : score, pièges connus, jauge de prix, message de négociation. L'app s'installe sur l'écran d'accueil comme une vraie application, avec les mêmes offres que l'extension."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Est-ce que mes données sont envoyées quelque part ?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -494,6 +502,9 @@
     text-align: center;
   }
 
+  /* Par défaut (desktop) : bouton extension visible, bouton app mobile caché. */
+  .nav-cta-mobile-only { display: none; }
+
   @media (max-width: 780px) {
     .nav-links { display: none; }
 
@@ -515,6 +526,13 @@
       padding: 8px 12px;
       font-size: 12px;
     }
+
+    /* Sur mobile, l'extension Chrome ne peut de toute façon pas s'installer
+       (les extensions n'existent pas sur les navigateurs mobiles) - on
+       bascule donc vers le bouton "Installer l'app" (PWA), bien plus
+       pertinent ici. */
+    .nav-cta-desktop-only { display: none; }
+    .nav-cta-mobile-only { display: block; }
   }
 
   .nav-cta .nav-cta-short { display: none; }
@@ -694,6 +712,20 @@
   }
 
   .compat-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #04302c; flex-shrink: 0; }
+
+  /* ===== BANDE DE RÉASSURANCE ===== */
+  .trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 18px;
+  }
+  .trust-item {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
   /* ===== ONBOARDING VISUEL (3 étapes) ===== */
   .onboard-grid {
@@ -1111,6 +1143,16 @@
     font-size: 13.5px;
     font-weight: 700;
     text-decoration: none;
+    /* Reset des styles par défaut du navigateur pour <button> - ces deux
+       boutons étaient des <a> avant, maintenant des <button> pour ouvrir
+       la modale de confirmation légale plutôt que de foncer direct sur le
+       paiement. */
+    border: none;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    width: 100%;
+    display: block;
   }
 
   .price-cta.free {
@@ -1505,11 +1547,13 @@
       <div class="nav-links">
         <a href="#comment-ca-marche">Comment ça marche</a>
         <a href="#fonctionnalites">Fonctionnalités</a>
+        <a href="app.html">App mobile</a>
         <a href="#tarifs">Tarifs</a>
         <a href="#faq">FAQ</a>
       </div>
       <button class="nav-login-btn" id="navLoginBtn" type="button">Connexion</button>
-      <a class="nav-cta" href="#tarifs"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
+      <a class="nav-cta nav-cta-desktop-only" href="#tarifs"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
+      <a class="nav-cta nav-cta-mobile-only" href="app.html">📲 Installer l'app</a>
     </div>
   </nav>
 
@@ -1548,6 +1592,30 @@
     </div>
   </div>
 
+  <!-- Modale de confirmation avant paiement - case de renonciation au droit
+       de rétractation (article L.221-28 13° du Code de la consommation),
+       obligatoire pour un contenu numérique livré immédiatement. -->
+  <div class="modal-overlay" id="withdrawalModalOverlay">
+    <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="withdrawalModalTitle">
+      <button class="modal-close" id="withdrawalModalClose" type="button" aria-label="Fermer">✕</button>
+      <h2 id="withdrawalModalTitle">Dernière étape</h2>
+      <p class="login-sub" id="withdrawalModalProduct">🐅 Requin Tigre - 14,99€</p>
+
+      <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; background:rgba(255,255,255,0.03); border:1.5px solid #334155; border-radius:10px; padding:14px; margin-bottom:16px;">
+        <input type="checkbox" id="withdrawalConsentCheckbox" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
+        <span style="font-size:12.5px; line-height:1.55; color:#cbd5e1;">
+          Je demande l'accès immédiat au service et <strong style="color:#eaf3f7;">j'accepte de renoncer expressément à mon délai de rétractation de 14 jours</strong>, conformément à l'article L.221-28 13° du Code de la consommation applicable aux contenus numériques livrés sans support matériel.
+        </span>
+      </label>
+
+      <button class="email-login-btn" id="withdrawalContinueBtn" type="button" disabled style="opacity:0.4; cursor:not-allowed;">
+        Continuer vers le paiement sécurisé →
+      </button>
+
+      <p class="login-modal-note">Tu seras redirigé vers Lemon Squeezy, notre prestataire de paiement (Merchant of Record). Consulte nos <a href="cgv.html" target="_blank" style="color:#2dd4bf;">CGV</a> pour le détail des conditions.</p>
+    </div>
+  </div>
+
   <header class="hero">
     <div class="bg-glow g1" aria-hidden="true"></div>
     <div class="bg-glow g2" aria-hidden="true"></div>
@@ -1562,6 +1630,13 @@
         </div>
         <div class="hero-microcopy">5 analyses gratuites par jour · Aucune carte bancaire requise pour commencer</div>
         <div class="compat-badge"><span class="dot"></span>Compatible Leboncoin.fr</div>
+
+        <div class="trust-row">
+          <span class="trust-item">🔒 Paiement 100% sécurisé</span>
+          <span class="trust-item">🇫🇷 Entreprise française</span>
+          <span class="trust-item">⚡ Résultat en quelques secondes</span>
+          <span class="trust-item">🔄 Résiliable en 1 clic</span>
+        </div>
       </div>
 
       <div class="sonar">
@@ -1797,7 +1872,7 @@
             <li><span class="check">✓</span> Paiement unique, zéro engagement</li>
             <li><span class="check">✓</span> Rechargeable à tout moment</li>
           </ul>
-          <a class="price-cta premium-btn" href="https://dealshark.lemonsqueezy.com/checkout/buy/f1833edd-a7c5-491c-80d3-0efd67a1fdb0" target="_blank" rel="noopener" id="requinTigreBtn">Acheter le pack - 14,99€</a>
+          <button class="price-cta premium-btn" id="requinTigreBtn" data-checkout-url="https://dealshark.lemonsqueezy.com/checkout/buy/f1833edd-a7c5-491c-80d3-0efd67a1fdb0" data-product-name="🐅 Requin Tigre" data-product-price="14,99€ (paiement unique)">Acheter le pack - 14,99€</button>
         </div>
 
         <div class="price-card premium">
@@ -1811,10 +1886,15 @@
             <li><span class="check">✓</span> Renouvellement automatique chaque mois</li>
             <li><span class="check">✓</span> Sans engagement, résiliable à tout moment</li>
           </ul>
-          <a class="price-cta premium-btn" href="https://dealshark.lemonsqueezy.com/checkout/buy/a0a170aa-9ceb-4d2e-adf6-aac34087e750" target="_blank" rel="noopener" id="grandBlancBtn">S'abonner - 19,99€/mois</a>
+          <button class="price-cta premium-btn" id="grandBlancBtn" data-checkout-url="https://dealshark.lemonsqueezy.com/checkout/buy/a0a170aa-9ceb-4d2e-adf6-aac34087e750" data-product-name="🦈 Grand Blanc" data-product-price="19,99€/mois (sans engagement)">S'abonner - 19,99€/mois</button>
         </div>
       </div>
 
+      <div class="trust-row" style="justify-content:center; margin-top:24px; margin-bottom:6px;">
+        <span class="trust-item">💳 Paiement géré par Lemon Squeezy (Merchant of Record)</span>
+        <span class="trust-item">📜 Médiateur de la consommation agréé (CM2C)</span>
+        <span class="trust-item">🚫 Aucune donnée bancaire stockée par MargeShark</span>
+      </div>
       <p class="pricing-note">Après paiement, tu reçois ta clé de licence par email. Colle-la dans le popup de l'extension pour débloquer tes analyses instantanément.</p>
     </div>
   </section>
@@ -1834,6 +1914,10 @@
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-0b" id="faq-btn-0b"><span>Où puis-je télécharger l'extension ?</span><span class="chev" aria-hidden="true">⌄</span></button>
           <div class="faq-a" id="faq-ans-0b" role="region" aria-labelledby="faq-btn-0b"><div class="faq-a-inner">MargeShark est actuellement en cours de revue sur le Chrome Web Store, une étape obligatoire imposée par Google pour toute nouvelle extension. Elle sera disponible en téléchargement public dès cette revue terminée - clique sur "Installer l'extension" pour être redirigé dès qu'elle est en ligne.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-0c" id="faq-btn-0c"><span>Puis-je utiliser MargeShark sur mon téléphone ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-0c" role="region" aria-labelledby="faq-btn-0c"><div class="faq-a-inner">Oui, via notre app web installable (PWA) plutôt que l'extension - les extensions Chrome n'existent pas sur mobile. Sur MargeShark.fr/app.html, ajoute une capture d'écran de l'annonce (au lieu d'un lien automatique) et obtiens la même analyse complète : score, pièges connus, jauge de prix, message de négociation. L'app peut s'installer sur ton écran d'accueil comme une vraie application, gratuitement, avec les mêmes offres que l'extension (5 analyses/jour gratuites, ou tes crédits Requin Tigre/Grand Blanc si tu as déjà un compte).</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-1" id="faq-btn-1"><span>Est-ce que mes données sont envoyées quelque part ?</span><span class="chev" aria-hidden="true">⌄</span></button>
@@ -1966,8 +2050,52 @@
       alert("MargeShark est en cours de revue sur le Chrome Web Store - une étape obligatoire imposée par Google. Elle sera disponible très bientôt ! Pour être prévenu dès sa mise en ligne, écris-nous à hello@margeshark.fr.");
     });
 
-    // Requin Tigre / Grand Blanc : liens directs vers Lemon Squeezy (voir
-    // attribut href), aucun handler JS nécessaire, target="_blank" natif.
+    // Requin Tigre / Grand Blanc : ouvre la modale de confirmation (case de
+    // renonciation au droit de rétractation) avant de rediriger vers le
+    // vrai paiement Lemon Squeezy - voir Article 5 des CGV.
+    const withdrawalOverlay = document.getElementById("withdrawalModalOverlay");
+    const withdrawalCheckbox = document.getElementById("withdrawalConsentCheckbox");
+    const withdrawalContinueBtn = document.getElementById("withdrawalContinueBtn");
+    const withdrawalProductEl = document.getElementById("withdrawalModalProduct");
+    let pendingCheckoutUrl = null;
+
+    function openWithdrawalModal(checkoutUrl, productName, productPrice) {
+      pendingCheckoutUrl = checkoutUrl;
+      withdrawalProductEl.textContent = `${productName} - ${productPrice}`;
+      withdrawalCheckbox.checked = false;
+      withdrawalContinueBtn.disabled = true;
+      withdrawalContinueBtn.style.opacity = "0.4";
+      withdrawalContinueBtn.style.cursor = "not-allowed";
+      withdrawalOverlay.classList.add("open");
+    }
+    function closeWithdrawalModal() {
+      withdrawalOverlay.classList.remove("open");
+      pendingCheckoutUrl = null;
+    }
+
+    document.getElementById("requinTigreBtn").addEventListener("click", function () {
+      openWithdrawalModal(this.getAttribute("data-checkout-url"), this.getAttribute("data-product-name"), this.getAttribute("data-product-price"));
+    });
+    document.getElementById("grandBlancBtn").addEventListener("click", function () {
+      openWithdrawalModal(this.getAttribute("data-checkout-url"), this.getAttribute("data-product-name"), this.getAttribute("data-product-price"));
+    });
+
+    document.getElementById("withdrawalModalClose").addEventListener("click", closeWithdrawalModal);
+    withdrawalOverlay.addEventListener("click", (e) => {
+      if (e.target === withdrawalOverlay) closeWithdrawalModal();
+    });
+
+    withdrawalCheckbox.addEventListener("change", () => {
+      withdrawalContinueBtn.disabled = !withdrawalCheckbox.checked;
+      withdrawalContinueBtn.style.opacity = withdrawalCheckbox.checked ? "1" : "0.4";
+      withdrawalContinueBtn.style.cursor = withdrawalCheckbox.checked ? "pointer" : "not-allowed";
+    });
+
+    withdrawalContinueBtn.addEventListener("click", () => {
+      if (!withdrawalCheckbox.checked || !pendingCheckoutUrl) return;
+      window.open(pendingCheckoutUrl, "_blank", "noopener");
+      closeWithdrawalModal();
+    });
 
     // Login modal: front-end only for now. Google OAuth and magic-link email
     // require a real backend (OAuth client + email sending service) that
@@ -1985,7 +2113,9 @@
       if (e.target === loginOverlay) closeLoginModal();
     });
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && loginOverlay.classList.contains("open")) closeLoginModal();
+      if (e.key !== "Escape") return;
+      if (loginOverlay.classList.contains("open")) closeLoginModal();
+      if (withdrawalOverlay.classList.contains("open")) closeWithdrawalModal();
     });
 
     document.getElementById("emailLoginBtn").addEventListener("click", async () => {
