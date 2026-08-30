@@ -699,7 +699,7 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension + goldPriceContext }] },
         contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 3072, responseMimeType: "application/json" }
+        generationConfig: { temperature: 0.2, maxOutputTokens: 3072, responseMimeType: "application/json" }
       })
     });
 
@@ -780,6 +780,8 @@ Renvoie STRICTEMENT un objet JSON valide (sans Markdown, sans texte autour) avec
     "agressif": "Message appuyé sur les défauts/manques constatés pour négocier environ -25%"
   }
 }
+
+VARIÉTÉ DES MESSAGES DE NÉGOCIATION - Varie réellement la formulation, la structure de phrase, l'ordre des arguments et le ton d'un message à l'autre à chaque nouvelle génération, même pour une annonce très proche d'une précédente - évite de retomber sur des tournures stéréotypées ou identiques à chaque fois. Les faits mentionnés (défauts, prix cible) doivent rester exacts, mais la façon de les exprimer doit varier naturellement, comme le ferait une vraie personne qui écrit ce message pour la première fois.
 
 Ne renvoie jamais de champ "marge_estimee_revente" : cette valeur est calculée par l'application elle-même à partir de "estimation_marche".`;
   }
