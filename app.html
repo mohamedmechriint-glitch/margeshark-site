@@ -6,7 +6,6 @@
 <title>MargeShark - Scanner d'annonces</title>
 <meta name="description" content="Analyse tes annonces Leboncoin par capture d'écran, directement depuis ton téléphone." />
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#0a1420" />
 <link rel="apple-touch-icon" href="icon-pwa-192.png" />
@@ -19,24 +18,13 @@
 
 <style>
   :root {
-    --ocean-surface: #0f2340;
-    --ocean-mid: #0a1a30;
     --ocean-deep: #050d1a;
-    --ocean-abyss: #020509;
     --teal: #2dd4bf;
-    --teal-dim: #164e4a;
-    --gold: #fbbf24;
-    --coral: #ff7a45;
     --text-hi: #eaf3f7;
-    --text-mid: #a8bdcc;
     --text-dim: #768e9f;
     --line: rgba(148, 180, 200, 0.14);
-    --red: #f87171;
-    --green: #4ade80;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: "IBM Plex Sans", -apple-system, sans-serif;
     background: var(--ocean-deep);
@@ -45,175 +33,188 @@
     min-height: 100vh;
     padding-bottom: 40px;
   }
-
   .topbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--line);
-    position: sticky;
-    top: 0;
-    background: rgba(5, 13, 26, 0.92);
-    backdrop-filter: blur(10px);
-    z-index: 10;
+    display: flex; align-items: center; gap: 10px; padding: 16px 20px;
+    border-bottom: 1px solid var(--line); position: sticky; top: 0;
+    background: rgba(5, 13, 26, 0.92); backdrop-filter: blur(10px); z-index: 10;
   }
-  .topbar img { width: 30px; height: 30px; }
-  .topbar .brand { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 17px; }
-
+  .topbar img { width: 30px; height: 30px; flex-shrink: 0; }
+  .topbar .brand {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 17px;
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topbar-login-btn {
+    flex-shrink: 0;
+    background: transparent; border: 1.5px solid var(--line); color: var(--text-hi);
+    padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+    text-decoration: none; white-space: nowrap;
+  }
   .wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
 
   .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
   .mode-tab {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1.5px solid var(--line);
-    background: rgba(255,255,255,0.03);
-    color: var(--text-dim);
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
+    flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--line);
+    background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 13px;
+    font-weight: 700; cursor: pointer; text-align: center;
   }
   .mode-tab.active { background: rgba(45, 212, 191, 0.14); border-color: var(--teal); color: var(--teal); }
 
   .card {
-    background: rgba(15, 35, 64, 0.5);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 16px;
+    background: rgba(15, 35, 64, 0.5); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px;
   }
 
-  .field-label { font-size: 12.5px; font-weight: 700; color: var(--text-mid); margin-bottom: 6px; display: block; }
+  .field-label { font-size: 12.5px; font-weight: 700; color: #a8bdcc; margin-bottom: 6px; display: block; }
   .field-input {
-    width: 100%;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 11px 12px;
-    color: var(--text-hi);
-    font-size: 14px;
-    font-family: "IBM Plex Mono", monospace;
+    width: 100%; background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 8px;
+    padding: 11px 12px; color: var(--text-hi); font-size: 14px; font-family: "IBM Plex Mono", monospace;
     margin-bottom: 8px;
   }
   .field-hint { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; }
   .field-hint a { color: var(--teal); }
-
   .save-key-btn {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    background: var(--ocean-surface);
-    color: var(--text-hi);
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    margin-top: 6px;
+    width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f2340;
+    color: var(--text-hi); font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 6px;
   }
-  .save-key-btn.saved { background: rgba(74, 222, 128, 0.14); color: var(--green); }
+  .save-key-btn.saved { background: rgba(74, 222, 128, 0.14); color: #4ade80; }
+
+  .help-box {
+    margin-top: 14px; background: rgba(66, 133, 244, 0.08);
+    border: 1px solid rgba(66, 133, 244, 0.25); border-radius: 12px; padding: 14px 14px 12px 14px;
+  }
+  .help-box-title { font-size: 12.5px; font-weight: 700; color: #e2e8f0; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .help-steps { list-style: none; padding: 0; margin: 0 0 12px 0; display: flex; flex-direction: column; gap: 7px; }
+  .help-steps li { font-size: 11.5px; color: #94a3b8; line-height: 1.5; display: flex; gap: 8px; }
+  .help-steps .step-num {
+    flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; background: rgba(66, 133, 244, 0.25);
+    color: #93c5fd; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .get-key-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 10px;
+    background: #ffffff; color: #1a73e8; border-radius: 9px; font-size: 12.5px; font-weight: 700; text-decoration: none;
+  }
 
   .upload-zone {
-    border: 2px dashed var(--line);
-    border-radius: 14px;
-    padding: 32px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
+    border: 2px dashed var(--line); border-radius: 14px; padding: 28px 16px; text-align: center; cursor: pointer;
   }
-  .upload-zone:active { border-color: var(--teal); }
-  .upload-zone.has-image { border-style: solid; padding: 12px; }
-  .upload-icon { font-size: 34px; margin-bottom: 8px; }
+  .upload-icon { font-size: 30px; margin-bottom: 8px; }
   .upload-label { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
   .upload-sub { font-size: 12px; color: var(--text-dim); }
-  .preview-img { max-width: 100%; max-height: 260px; border-radius: 8px; display: block; margin: 0 auto; }
-
   #fileInput { display: none; }
 
+  .thumbs-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .thumb-item { position: relative; width: 70px; height: 70px; }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .thumb-remove {
+    position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
+    background: #f87171; color: white; border: none; font-size: 12px; font-weight: 800; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .add-more-btn {
+    width: 100%; padding: 9px; border-radius: 8px; border: 1px dashed var(--line); background: transparent;
+    color: var(--text-dim); font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 10px;
+  }
+
   .analyze-btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, var(--teal), #14b8a6);
-    color: #04302c;
-    font-weight: 800;
-    font-size: 15px;
-    cursor: pointer;
-    margin-top: 14px;
-    opacity: 0.4;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
+    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    background: #facc15; color: #04302c; font-weight: 800; font-size: 15px;
+    cursor: pointer; margin-top: 14px; opacity: 0.4; pointer-events: none; transition: opacity 0.2s ease;
+    position: relative; overflow: hidden; box-shadow: 0 3px 10px rgba(250, 204, 21, 0.3);
   }
   .analyze-btn.ready { opacity: 1; pointer-events: auto; }
-  .analyze-btn:disabled { opacity: 0.6; pointer-events: none; }
+  .analyze-btn::after {
+    content: "";
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.85), transparent);
+    transform: skewX(-20deg);
+    animation: analyze-shine 2.2s ease-in-out infinite;
+  }
+  @keyframes analyze-shine {
+    0% { left: -60%; }
+    50% { left: 130%; }
+    100% { left: 130%; }
+  }
 
   .status-box { text-align: center; padding: 30px 16px; }
   .status-box .emoji { font-size: 32px; margin-bottom: 10px; }
-  .status-box p { font-size: 13.5px; color: var(--text-mid); }
-  .error-text { color: var(--red); font-size: 13px; margin-top: 10px; text-align: center; }
+  .status-box p { font-size: 13.5px; color: #a8bdcc; }
+  .error-text { color: #f87171; font-size: 13px; margin-top: 10px; text-align: center; }
 
-  /* ===== Résultat ===== */
-  .score-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .score-circle {
-    width: 64px; height: 64px; border-radius: 50%;
-    display: flex; align-items: baseline; justify-content: center;
-    font-family: "Space Grotesk", sans-serif; font-weight: 800; font-size: 24px;
-    border: 2px solid;
-    flex-shrink: 0;
-  }
-  .score-circle span { font-size: 12px; opacity: 0.6; margin-left: 1px; }
-  .score-good { color: var(--green); border-color: var(--green); background: rgba(74,222,128,0.08); }
-  .score-mid { color: var(--gold); border-color: var(--gold); background: rgba(251,191,36,0.08); }
-  .score-bad { color: var(--red); border-color: var(--red); background: rgba(248,113,113,0.08); }
-  .verdict-label { font-size: 10.5px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; }
-  .verdict-text { font-size: 14.5px; font-weight: 700; }
+  .dd-score-row { display: flex; align-items: center; gap: 14px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 14px; border: 1px solid #334155; }
+  .dd-score-display { display: flex; align-items: baseline; gap: 2px; flex-shrink: 0; font-weight: 900; }
+  .dd-score-number { font-size: 38px; line-height: 1; letter-spacing: -1px; }
+  .dd-score-max { font-size: 16px; opacity: 0.55; font-weight: 800; }
+  .dd-score-green { color: #4ade80; } .dd-score-orange { color: #fbbf24; } .dd-score-red { color: #f87171; }
+  .dd-verdict-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .dd-verdict-label { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .dd-verdict-text { font-size: 15px; font-weight: 800; color: #e2e8f0; }
 
-  .insight-box {
-    background: rgba(251, 191, 36, 0.06);
-    border: 1px solid rgba(251, 191, 36, 0.2);
-    border-radius: 10px;
-    padding: 12px 13px;
-    margin-bottom: 12px;
-  }
-  .insight-title { font-size: 12px; font-weight: 800; color: var(--gold); margin-bottom: 5px; }
-  .insight-text { font-size: 13px; line-height: 1.55; color: var(--text-mid); }
+  .dd-badges-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .dd-mini-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; padding: 6px 10px; border-radius: 999px; letter-spacing: 0.2px; }
+  .dd-mini-badge-confidence-high { background: rgba(74, 222, 128, 0.14); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.35); }
+  .dd-mini-badge-confidence-mid { background: rgba(251, 191, 36, 0.16); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+  .dd-mini-badge-confidence-low { background: rgba(248, 113, 113, 0.14); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.35); }
+  .dd-mini-badge-urgency { background: linear-gradient(135deg, #fb923c, #ea580c); color: #ffffff; }
 
-  .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .price-cell { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-  .price-cell-label { font-size: 10px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; margin-bottom: 4px; }
-  .price-cell-value { font-size: 16px; font-weight: 800; }
+  .dd-product-insight { background: rgba(251, 191, 36, 0.06); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; padding: 12px 13px; margin-bottom: 14px; }
+  .dd-product-insight-title { font-size: 11.5px; font-weight: 800; color: #fbbf24; margin-bottom: 5px; }
+  .dd-product-insight-text { font-size: 12px; line-height: 1.5; color: #cbd5e1; margin: 0 0 6px 0; }
+  .dd-product-insight-disclaimer { font-size: 9.5px; color: #64748b; font-style: italic; }
 
-  .nego-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .nego-tab {
-    flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--line);
-    background: transparent; color: var(--text-dim); font-size: 12px; font-weight: 700; cursor: pointer;
-  }
-  .nego-tab.active { background: rgba(45,212,191,0.14); border-color: var(--teal); color: var(--teal); }
-  .nego-message {
-    background: #fff; color: #1f2937; border-radius: 10px; padding: 12px;
-    font-size: 13.5px; line-height: 1.5; margin-bottom: 10px;
-  }
-  .copy-btn {
-    width: 100%; padding: 10px; border-radius: 8px; border: none;
-    background: var(--teal); color: #04302c; font-weight: 800; font-size: 13px; cursor: pointer;
-  }
+  .dd-price-gauge { background: rgba(255,255,255,0.03); border: 1px solid #334155; border-radius: 14px; padding: 14px 14px 10px 14px; margin-bottom: 12px; }
+  .dd-gauge-track { position: relative; height: 10px; border-radius: 999px; overflow: visible; display: flex; margin: 6px 0 22px 0; }
+  .dd-gauge-zone { height: 100%; }
+  .dd-gauge-zone-green { background: #4ade80; border-radius: 999px 0 0 999px; }
+  .dd-gauge-zone-yellow { background: #fbbf24; }
+  .dd-gauge-zone-red { background: #f87171; border-radius: 0 999px 999px 0; }
+  .dd-gauge-cursor { position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: #0f172a; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.5); transform: translate(-50%, -50%); z-index: 2; }
+  .dd-gauge-target-marker { position: absolute; top: -4px; bottom: -4px; width: 0; z-index: 1; }
+  .dd-gauge-target-line { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: repeating-linear-gradient(180deg, #e2e8f0 0, #e2e8f0 3px, transparent 3px, transparent 6px); }
+  .dd-gauge-badge-row { position: relative; height: 22px; }
+  .dd-gauge-badge { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+  .dd-gauge-badge-good { background: rgba(74, 222, 128, 0.18); color: #4ade80; }
+  .dd-gauge-badge-bad { background: rgba(248, 113, 113, 0.18); color: #f87171; }
+  .dd-gauge-badge-fair { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+  .dd-gauge-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 9.5px; color: #64748b; font-weight: 600; margin-top: 4px; }
+  .dd-gauge-legend-target { color: #e2e8f0; margin-left: auto; }
 
-  .list-title { font-size: 12px; font-weight: 800; color: var(--text-mid); margin: 14px 0 6px; }
-  .list-items { font-size: 13px; color: var(--text-mid); padding-left: 16px; line-height: 1.7; }
+  .dd-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .dd-stat-box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px 12px; border: 1px solid #334155; }
+  .dd-stat-label { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+  .dd-stat-value { font-size: 13px; color: #e2e8f0; font-weight: 700; }
+  .dd-stat-value-negative { color: #f87171; }
+  .dd-market-caption { font-size: 10.5px; color: #64748b; font-weight: 600; margin: -8px 0 16px 2px; }
 
-  .new-scan-btn {
-    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line);
-    background: transparent; color: var(--text-hi); font-weight: 700; font-size: 13.5px;
-    cursor: pointer; margin-top: 16px;
-  }
+  .dd-tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 12px; margin-bottom: 16px; }
+  .dd-tab { flex: 1; border: none; background: transparent; padding: 8px 6px; font-size: 12px; font-weight: 700; color: #94a3b8; border-radius: 9px; cursor: pointer; }
+  .dd-tab.dd-tab-active { background: #2dd4bf; color: #04302c; }
+  .dd-tab-panel { display: none; }
+  .dd-tab-panel.dd-tab-panel-active { display: block; }
 
-  .install-hint {
-    font-size: 11.5px; color: var(--text-dim); text-align: center; margin-top: 20px; line-height: 1.6;
-  }
+  .dd-section { margin-bottom: 14px; }
+  .dd-section-title { font-size: 12px; font-weight: 800; color: #e2e8f0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .dd-section-title-positive { color: #4ade80; } .dd-section-title-warning { color: #fbbf24; }
+  .dd-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  .dd-list li { font-size: 12.5px; line-height: 1.5; color: #cbd5e1; padding: 9px 11px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid #475569; }
+  .dd-list-positive li { border-left-color: #4ade80; background: rgba(74, 222, 128, 0.06); }
+  .dd-list-warning li { border-left-color: #fbbf24; background: rgba(251, 191, 36, 0.07); }
+  .dd-list-empty { color: #64748b !important; font-style: italic; }
+  .dd-section-redflags { background: rgba(248, 113, 113, 0.08); border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 14px; padding: 12px 13px; }
+  .dd-section-redflags .dd-section-title { color: #f87171; }
+  .dd-list-redflags li { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.1); color: #fca5a5; font-weight: 600; }
+
+  .dd-subtabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .dd-subtab { flex: 1; border: 1.5px solid #334155; background: rgba(255,255,255,0.02); padding: 8px 4px; font-size: 10.5px; font-weight: 700; color: #94a3b8; border-radius: 10px; cursor: pointer; text-align: center; line-height: 1.3; }
+  .dd-subtab.dd-subtab-active { background: rgba(45, 212, 191, 0.12); border-color: #2dd4bf; color: #2dd4bf; }
+
+  .dd-copy-list { display: flex; flex-direction: column; gap: 8px; }
+  .dd-copy-item { display: flex; align-items: flex-start; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid #334155; border-radius: 11px; padding: 10px 10px 10px 12px; }
+  .dd-copy-text { flex: 1; font-size: 12px; line-height: 1.5; color: #e2e8f0; }
+  .dd-copy-btn { flex-shrink: 0; background: rgba(45, 212, 191, 0.15); border: none; border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: 15px; }
+  .dd-copy-success { background: rgba(74, 222, 128, 0.3) !important; }
+
+  .new-scan-btn { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text-hi); font-weight: 700; font-size: 13.5px; cursor: pointer; margin-top: 16px; }
+  .install-hint { font-size: 11.5px; color: var(--text-dim); text-align: center; margin-top: 20px; line-height: 1.6; }
 
   #resultSection, #loadingSection, #errorSection { display: none; }
 </style>
@@ -223,25 +224,33 @@
   <div class="topbar">
     <img src="icon-pwa-192.png" alt="MargeShark" />
     <span class="brand">MargeShark</span>
+    <a href="espace-client.html" class="topbar-login-btn">Connexion</a>
   </div>
 
   <div class="wrap">
 
-    <!-- ===== Sélecteur Gratuit / Payant ===== -->
     <div class="mode-tabs">
       <button class="mode-tab active" id="modeFreeTab" data-mode="free">🔑 Gratuit (ma clé)</button>
       <button class="mode-tab" id="modePaidTab" data-mode="paid">👑 Payant (licence)</button>
     </div>
 
-    <!-- ===== Config clé (gratuit) ===== -->
     <div class="card" id="freeConfigCard">
       <label class="field-label">Clé API Google Gemini</label>
       <input type="password" class="field-input" id="geminiKeyInput" placeholder="AIzaSy..." autocomplete="off" spellcheck="false" />
       <button class="save-key-btn" id="saveGeminiKeyBtn">Enregistrer la clé</button>
-      <p class="field-hint" style="margin-top:8px;">Gratuite sur <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com</a> (2 min, sans carte bancaire). Stockée uniquement dans ce navigateur, jamais envoyée ailleurs qu'à Google.</p>
+
+      <div class="help-box">
+        <div class="help-box-title">🔑 Pas encore de clé ? Voici comment en obtenir une (gratuit, sans carte bancaire) :</div>
+        <ol class="help-steps">
+          <li><span class="step-num">1</span><span>Clique sur le bouton ci-dessous, tu arrives sur Google AI Studio</span></li>
+          <li><span class="step-num">2</span><span>Connecte-toi avec ton compte Google habituel</span></li>
+          <li><span class="step-num">3</span><span>Clique sur "Create API key" (un projet gratuit est créé automatiquement si besoin)</span></li>
+          <li><span class="step-num">4</span><span>Copie la clé générée (elle commence par "AIzaSy...") et colle-la dans le champ ci-dessus</span></li>
+        </ol>
+        <a class="get-key-btn" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">🔗 Obtenir ma clé API Gemini</a>
+      </div>
     </div>
 
-    <!-- ===== Config licence (payant) ===== -->
     <div class="card" id="paidConfigCard" style="display:none;">
       <label class="field-label">Clé de licence MargeShark</label>
       <input type="text" class="field-input" id="licenseKeyInput" placeholder="Reçue par email après ton achat" autocomplete="off" spellcheck="false" />
@@ -249,71 +258,102 @@
       <p class="field-hint" style="margin-top:8px;">La même clé que celle utilisée dans l'extension Chrome (Requin Tigre ou Grand Blanc).</p>
     </div>
 
-    <!-- ===== Upload ===== -->
     <div class="card">
       <div class="upload-zone" id="uploadZone">
-        <div id="uploadZoneContent">
-          <div class="upload-icon">📸</div>
-          <div class="upload-label">Ajoute une capture d'écran</div>
-          <div class="upload-sub">Titre, prix et description visibles sur l'annonce</div>
-        </div>
-        <img class="preview-img" id="previewImg" style="display:none;" />
+        <div class="upload-icon">📸</div>
+        <div class="upload-label">Ajoute 1 à 4 captures d'écran</div>
+        <div class="upload-sub">Titre, prix et description visibles sur l'annonce</div>
       </div>
-      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" capture="environment" />
+      <div class="thumbs-row" id="thumbsRow"></div>
+      <button class="add-more-btn" id="addMoreBtn" style="display:none;">+ Ajouter une autre capture</button>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple />
       <button class="analyze-btn" id="analyzeBtn">🦈 Analyser cette annonce</button>
     </div>
 
-    <!-- ===== Chargement ===== -->
     <div class="card status-box" id="loadingSection">
       <div class="emoji">🦈</div>
       <p id="loadingText">Analyse en cours...</p>
     </div>
 
-    <!-- ===== Erreur ===== -->
     <div class="card" id="errorSection">
       <p class="error-text" id="errorText"></p>
     </div>
 
-    <!-- ===== Résultat ===== -->
     <div class="card" id="resultSection">
-      <div class="score-row">
-        <div class="score-circle" id="scoreCircle"><span id="scoreValue">-</span><span>/10</span></div>
-        <div>
-          <div class="verdict-label">Verdict</div>
-          <div class="verdict-text" id="verdictText"></div>
+      <div class="dd-score-row">
+        <div class="dd-score-display" id="scoreDisplay">
+          <span class="dd-score-number" id="scoreValue">-</span><span class="dd-score-max">/10</span>
+        </div>
+        <div class="dd-verdict-block">
+          <div class="dd-verdict-label">Verdict</div>
+          <div class="dd-verdict-text" id="verdictText"></div>
         </div>
       </div>
 
-      <div class="insight-box">
-        <div class="insight-title">⚠️ Défauts connus & pièges à éviter</div>
-        <div class="insight-text" id="insightText"></div>
+      <div class="dd-badges-row" id="badgesRow"></div>
+
+      <div class="dd-product-insight" id="insightBox" style="display:none;">
+        <div class="dd-product-insight-title">⚠️ Défauts connus & pièges à éviter</div>
+        <p class="dd-product-insight-text" id="insightText"></p>
+        <div class="dd-product-insight-disclaimer">Basé sur les connaissances générales de l'IA (pas de recherche en temps réel).</div>
       </div>
 
-      <div class="price-grid">
-        <div class="price-cell">
-          <div class="price-cell-label">Prix détecté</div>
-          <div class="price-cell-value" id="priceDetected">-</div>
+      <div id="gaugeSlot"></div>
+
+      <div class="dd-stats-grid">
+        <div class="dd-stat-box">
+          <div class="dd-stat-label">Prix détecté</div>
+          <div class="dd-stat-value" id="priceDetected">-</div>
         </div>
-        <div class="price-cell">
-          <div class="price-cell-label">Cible négociation</div>
-          <div class="price-cell-value" id="priceTarget" style="color:var(--teal);">-</div>
+        <div class="dd-stat-box">
+          <div class="dd-stat-label" id="margeLabel">Marge revente</div>
+          <div class="dd-stat-value" id="margeValue">-</div>
         </div>
       </div>
 
-      <div class="list-title">✅ Points forts</div>
-      <ul class="list-items" id="pointsForts"></ul>
-
-      <div class="list-title">🔎 Points d'attention</div>
-      <ul class="list-items" id="pointsAttention"></ul>
-
-      <div class="list-title">💬 Message de négociation</div>
-      <div class="nego-tabs">
-        <button class="nego-tab" data-approach="rapide">⚡ Rapide</button>
-        <button class="nego-tab active" data-approach="doux">🤝 Courtois</button>
-        <button class="nego-tab" data-approach="agressif">💪 Appuyé</button>
+      <div class="dd-tabs">
+        <button class="dd-tab dd-tab-active" data-tab="analyse">Analyse</button>
+        <button class="dd-tab" data-tab="negocier">Négocier</button>
+        <button class="dd-tab" data-tab="verifier">Vérifier</button>
       </div>
-      <div class="nego-message" id="negoMessage"></div>
-      <button class="copy-btn" id="copyNegoBtn">📋 Copier ce message</button>
+
+      <div class="dd-tab-panel dd-tab-panel-active" data-tab-panel="analyse">
+        <div class="dd-section">
+          <div class="dd-section-title dd-section-title-positive">✅ Points forts</div>
+          <ul class="dd-list dd-list-positive" id="pointsForts"></ul>
+        </div>
+        <div class="dd-section">
+          <div class="dd-section-title dd-section-title-warning">🔎 Points d'attention</div>
+          <ul class="dd-list dd-list-warning" id="pointsAttention"></ul>
+        </div>
+        <div id="redFlagsSlot"></div>
+      </div>
+
+      <div class="dd-tab-panel" data-tab-panel="negocier">
+        <div class="dd-section">
+          <div class="dd-section-title">💬 Choisir une approche</div>
+          <div class="dd-subtabs">
+            <button class="dd-subtab" data-nego="rapide">⚡ Rapide<br/>(prix affiché)</button>
+            <button class="dd-subtab dd-subtab-active" data-nego="doux">🤝 Courtois<br/>(-10%)</button>
+            <button class="dd-subtab" data-nego="agressif">💪 Appuyé<br/>(-25%)</button>
+          </div>
+          <div class="dd-copy-item">
+            <span class="dd-copy-text" id="negoMessage"></span>
+            <button class="dd-copy-btn" id="copyNegoBtn" title="Copier">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-tab-panel" data-tab-panel="verifier">
+        <div class="dd-section">
+          <div class="dd-section-title">❓ Questions au vendeur</div>
+          <div class="dd-copy-list" id="questionsList"></div>
+        </div>
+        <div class="dd-section">
+          <div class="dd-section-title">🧪 À vérifier sur place</div>
+          <ul class="dd-list" id="pointsVerifier"></ul>
+        </div>
+      </div>
 
       <button class="new-scan-btn" id="newScanBtn">🔄 Analyser une autre annonce</button>
     </div>
@@ -327,18 +367,19 @@
   const MARGESHARK_BACKEND_URL = "https://margeshark-production.up.railway.app";
   const GEMINI_MODEL = "gemini-3.6-flash";
   const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+  const MAX_IMAGES = 4;
+  const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
+  const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
   let currentMode = localStorage.getItem("margeshark_pwa_mode") || "free";
-  let selectedFile = null;
-  let selectedFileBase64 = null;
+  let selectedImages = [];
   let lastAnalysis = null;
+  let currentNegoApproach = "doux";
 
-  /* ===================== SERVICE WORKER ===================== */
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch((e) => console.warn("[MargeShark PWA] Service worker non enregistré:", e));
   }
 
-  /* ===================== MODE GRATUIT / PAYANT ===================== */
   function applyMode(mode) {
     currentMode = mode;
     localStorage.setItem("margeshark_pwa_mode", mode);
@@ -348,14 +389,11 @@
     document.getElementById("paidConfigCard").style.display = mode === "paid" ? "block" : "none";
     updateAnalyzeButtonState();
   }
-
   document.getElementById("modeFreeTab").addEventListener("click", () => applyMode("free"));
   document.getElementById("modePaidTab").addEventListener("click", () => applyMode("paid"));
 
-  /* ===================== CLÉS (localStorage) ===================== */
   const geminiKeyInput = document.getElementById("geminiKeyInput");
   const licenseKeyInput = document.getElementById("licenseKeyInput");
-
   geminiKeyInput.value = localStorage.getItem("margeshark_pwa_gemini_key") || "";
   licenseKeyInput.value = localStorage.getItem("margeshark_pwa_license_key") || "";
 
@@ -378,55 +416,86 @@
     setTimeout(() => { btn.textContent = original; btn.classList.remove("saved"); }, 1500);
   }
 
-  /* ===================== UPLOAD IMAGE ===================== */
   const uploadZone = document.getElementById("uploadZone");
   const fileInput = document.getElementById("fileInput");
+  const thumbsRow = document.getElementById("thumbsRow");
+  const addMoreBtn = document.getElementById("addMoreBtn");
 
   uploadZone.addEventListener("click", () => fileInput.click());
+  addMoreBtn.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (!file) return;
+    const newFiles = Array.from(fileInput.files);
+    fileInput.value = "";
 
-    if (file.size > 8 * 1024 * 1024) {
-      showError("Image trop volumineuse (8 Mo max). Essaie une capture plus légère.");
-      return;
+    for (const file of newFiles) {
+      if (selectedImages.length >= MAX_IMAGES) {
+        showError(`Maximum ${MAX_IMAGES} captures par analyse.`);
+        break;
+      }
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        showError(`"${file.name}" n'est pas une image valide (JPEG, PNG ou WebP uniquement).`);
+        continue;
+      }
+      if (file.size > MAX_IMAGE_SIZE) {
+        showError(`"${file.name}" dépasse 8 Mo.`);
+        continue;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        selectedImages.push({ file, base64: e.target.result.split(",")[1], previewUrl: e.target.result });
+        renderThumbs();
+        updateAnalyzeButtonState();
+      };
+      reader.readAsDataURL(file);
     }
-
-    selectedFile = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      selectedFileBase64 = e.target.result.split(",")[1]; // retire le préfixe data:image/...;base64,
-      document.getElementById("previewImg").src = e.target.result;
-      document.getElementById("previewImg").style.display = "block";
-      document.getElementById("uploadZoneContent").style.display = "none";
-      uploadZone.classList.add("has-image");
-      updateAnalyzeButtonState();
-    };
-    reader.readAsDataURL(file);
   });
 
+  function renderThumbs() {
+    thumbsRow.innerHTML = selectedImages.map((img, i) => `
+      <div class="thumb-item">
+        <img src="${img.previewUrl}" alt="Capture ${i + 1}" />
+        <button class="thumb-remove" data-index="${i}" title="Retirer">✕</button>
+      </div>
+    `).join("");
+
+    thumbsRow.querySelectorAll(".thumb-remove").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedImages.splice(parseInt(btn.getAttribute("data-index"), 10), 1);
+        renderThumbs();
+        updateAnalyzeButtonState();
+      });
+    });
+
+    addMoreBtn.style.display = selectedImages.length > 0 && selectedImages.length < MAX_IMAGES ? "block" : "none";
+    uploadZone.style.display = selectedImages.length === 0 ? "block" : "none";
+  }
+
   function updateAnalyzeButtonState() {
-    const hasImage = !!selectedFileBase64;
+    const hasImages = selectedImages.length > 0;
     const hasKey = currentMode === "free"
       ? !!localStorage.getItem("margeshark_pwa_gemini_key")
       : !!localStorage.getItem("margeshark_pwa_license_key");
-    document.getElementById("analyzeBtn").classList.toggle("ready", hasImage && hasKey);
+    document.getElementById("analyzeBtn").classList.toggle("ready", hasImages && hasKey);
   }
 
-  /* ===================== ANALYSE ===================== */
   document.getElementById("analyzeBtn").addEventListener("click", async () => {
     hideAll();
     document.getElementById("loadingSection").style.display = "block";
+    document.getElementById("loadingText").textContent = selectedImages.length > 1
+      ? `Analyse de ${selectedImages.length} captures en cours...`
+      : "Analyse en cours...";
 
     try {
       let analysis;
       if (currentMode === "free") {
         const geminiKey = localStorage.getItem("margeshark_pwa_gemini_key");
-        analysis = await callGeminiDirect(geminiKey, selectedFileBase64, selectedFile.type);
+        analysis = await callGeminiDirect(geminiKey, selectedImages);
       } else {
         const licenseKey = localStorage.getItem("margeshark_pwa_license_key");
-        analysis = await callBackendAnalyze(licenseKey, selectedFileBase64, selectedFile.type);
+        analysis = await callBackendAnalyze(licenseKey, selectedImages);
       }
       lastAnalysis = analysis;
       renderResult(analysis);
@@ -441,31 +510,32 @@
     document.getElementById("errorSection").style.display = "none";
     document.getElementById("resultSection").style.display = "none";
   }
-
   function showError(message) {
     hideAll();
     document.getElementById("errorText").textContent = message;
     document.getElementById("errorSection").style.display = "block";
   }
 
-  /* --- Chemin gratuit : appel direct à Gemini depuis le navigateur --- */
-  async function callGeminiDirect(apiKey, imageBase64, mimeType) {
+  async function callGeminiDirect(apiKey, images) {
     if (!apiKey) throw new Error("Configure d'abord ta clé API Gemini ci-dessus.");
 
-    const systemInstruction = buildSystemInstructionForVision();
+    const schemaExtension = `
+
+IMPORTANT - En plus de la structure JSON habituelle, ajoute ces deux champs supplémentaires puisque personne ne te fournit le titre et le prix séparément ici, tu dois les identifier toi-même sur l'image (ou en combinant les informations si plusieurs images sont fournies) :
+  "titre_detecte": "le titre/nom du produit tel que visible sur l'image, ou null si vraiment illisible",
+  "prix_detecte": (nombre en €, le prix affiché tel que visible sur l'image, ou null si vraiment illisible)`;
+
+    const imageParts = images.map((img) => ({ inlineData: { mimeType: img.file.type, data: img.base64 } }));
+    const introText = images.length > 1
+      ? `Voici ${images.length} captures d'écran de la MÊME annonce Leboncoin. Combine les informations des différentes captures, lis le titre, le prix, la description et tout critère technique visible, puis analyse selon les règles ci-dessus.`
+      : "Voici une capture d'écran d'une annonce Leboncoin. Lis le titre, le prix et la description visibles, puis analyse selon les règles ci-dessus.";
 
     const response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        contents: [{
-          role: "user",
-          parts: [
-            { text: "Voici une capture d'écran d'une annonce Leboncoin. Lis le titre, le prix et la description visibles, puis analyse selon les règles ci-dessus." },
-            { inlineData: { mimeType, data: imageBase64 } }
-          ]
-        }],
+        systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension }] },
+        contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
         generationConfig: { temperature: 0.4, maxOutputTokens: 3072, responseMimeType: "application/json" }
       })
     });
@@ -485,14 +555,16 @@
     return JSON.parse(textBlock);
   }
 
-  /* --- Chemin payant : appel à notre backend (crédits Requin Tigre/Grand Blanc) --- */
-  async function callBackendAnalyze(licenseKey, imageBase64, mimeType) {
+  async function callBackendAnalyze(licenseKey, images) {
     if (!licenseKey) throw new Error("Configure d'abord ta clé de licence ci-dessus.");
 
     const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/analyze-screenshot`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ licenseKey, imageBase64, mimeType })
+      body: JSON.stringify({
+        licenseKey,
+        images: images.map((img) => ({ base64: img.base64, mimeType: img.file.type }))
+      })
     });
 
     const data = await response.json();
@@ -500,10 +572,6 @@
     return data.analysis;
   }
 
-  /* --- Même prompt système que l'extension (mot pour mot), avec juste
-     l'ajout des champs titre_detecte/prix_detecte puisque personne ne les
-     fournit séparément ici (contrairement à l'extension, qui les extrait
-     directement de la page) --- */
   function buildSystemInstructionForVision() {
     return `Tu es un expert en achat/revente d'occasion (flipping) et un négociateur redoutable sur Leboncoin, toutes catégories confondues.
 
@@ -529,19 +597,15 @@ Renvoie STRICTEMENT un objet JSON valide (sans Markdown, sans texte autour) avec
   "verdict": ("Excellente opportunité", "Bonne affaire", "Prix du marché", "Surévalué" ou "Risque/Arnaque"),
   "niveau_confiance": ("Élevée", "Moyenne" ou "Faible" - évalue la fiabilité de ton estimation selon la quantité et la précision des informations disponibles dans l'annonce),
   "vendeur_presse": (boolean, true si la description contient des indices de vente urgente comme "déménagement", "besoin de place", "urgent", "cause départ" ou équivalent),
-  "profil_vendeur": "une phrase courte synthétisant l'ancienneté et la fiabilité apparente du vendeur à partir des données fournies, par exemple 'Vendeur inscrit depuis 2019 - profil fiable' ou 'Compte récent - vigilance recommandée'. Si aucune donnée n'est disponible, dis-le explicitement.",
+  "profil_vendeur": "une phrase courte synthétisant l'ancienneté et la fiabilité apparente du vendeur à partir des données fournies. Si aucune donnée n'est disponible, dis-le explicitement.",
   "profil_vendeur_vigilance": (boolean, true si le profil du vendeur justifie une vigilance particulière de l'acheteur),
   "estimation_marche": "fourchette de prix estimée en € sur le marché français actuel",
-  "prix_negociation_cible": (nombre en €, ton prix d'ouverture de négociation recommandé pour cette annonce précise - vise un prix qui débloque une vraie marge de revente, généralement sous la borne basse de "estimation_marche", en tenant compte de l'état/urgence du vendeur si connus),
-  "avis_general_produit": "2 phrases maximum listant les défauts connus, pannes fréquentes, points faibles typiques ou pièges à surveiller pour ce produit/modèle précis (ex: panne récurrente connue, pièce fragile, arnaque courante sur ce type d'objet, contrefaçons fréquentes...) à partir de tes connaissances générales, dans un but de protection de l'acheteur - PAS un avis équilibré pros/cons, uniquement ce qu'il faut savoir pour éviter les pièges. PAS d'avis clients en temps réel puisque tu n'as pas d'accès internet live. Si tu ne connais pas de défaut ou piège particulier pour ce modèle précis, dis-le honnêtement (ex: 'Aucun défaut majeur connu pour ce modèle') plutôt que d'inventer, ou renvoie une chaîne vide.",
+  "prix_negociation_cible": (nombre en €, ton prix d'ouverture de négociation recommandé pour cette annonce précise - vise un prix qui débloque une vraie marge de revente, généralement sous la borne basse de "estimation_marche"),
+  "avis_general_produit": "2 phrases maximum listant les défauts connus, pannes fréquentes, points faibles typiques ou pièges à surveiller pour ce produit/modèle précis, dans un but de protection de l'acheteur. Si tu ne connais pas de défaut ou piège particulier pour ce modèle précis, dis-le honnêtement plutôt que d'inventer, ou renvoie une chaîne vide.",
   "points_forts": ["point 1", "point 2"],
   "points_attention": ["point 1 (inclure un point sur la vérification de la note et des avis du vendeur si pertinent)", "point 2"],
   "red_flags": ["piège, arnaque, tentative de manipulation ou alerte identifiée dans le texte"],
-  "questions_au_vendeur": [
-    "Question 1 (précise et technique sur un manque du texte)",
-    "Question 2",
-    "Question 3"
-  ],
+  "questions_au_vendeur": ["Question 1 (précise et technique sur un manque du texte)", "Question 2", "Question 3"],
   "points_a_verifier_sur_place": ["point 1 à tester absolument", "point 2 à tester", "vérifier la note et les avis du profil vendeur"],
   "messages_negociation": {
     "rapide": "Message ultra-court pour achat immédiat au prix affiché, sans négociation, pour verrouiller l'affaire avant les concurrents",
@@ -553,77 +617,221 @@ Renvoie STRICTEMENT un objet JSON valide (sans Markdown, sans texte autour) avec
 Ne renvoie jamais de champ "marge_estimee_revente" : cette valeur est calculée par l'application elle-même à partir de "estimation_marche".`;
   }
 
-  /* ===================== AFFICHAGE DU RÉSULTAT ===================== */
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : String(str);
+    return div.innerHTML;
+  }
+
+  function getScoreClass(score) {
+    if (score >= 8) return "dd-score-green";
+    if (score >= 5) return "dd-score-orange";
+    return "dd-score-red";
+  }
+
+  function getConfidenceClass(level) {
+    if (level === "Élevée") return "dd-mini-badge-confidence-high";
+    if (level === "Moyenne") return "dd-mini-badge-confidence-mid";
+    return "dd-mini-badge-confidence-low";
+  }
+
+  function buildListItems(items, emptyLabel) {
+    if (!items || items.length === 0) return `<li class="dd-list-empty">${escapeHtml(emptyLabel)}</li>`;
+    return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  }
+
+  function parseMargeNumbers(margeStr) {
+    if (!margeStr) return null;
+    let normalized = String(margeStr);
+    for (let i = 0; i < 3; i++) normalized = normalized.replace(/(\d)[\s\u00A0\u202F](\d{3})(?!\d)/g, "$1$2");
+    const matches = normalized.match(/\d+([.,]\d+)?/g);
+    if (!matches || matches.length === 0) return null;
+    const numbers = matches.map((n) => parseFloat(n.replace(",", ".")));
+    return { min: Math.min(...numbers), max: Math.max(...numbers) };
+  }
+
+  function buildPriceGaugeHtml(adPrice, marketParsed, negotiationTarget) {
+    if (!marketParsed || marketParsed.min <= 0 || !adPrice) return "";
+    const marketLow = marketParsed.min;
+    const marketHigh = marketParsed.max;
+    let status = "FAIR";
+    if (adPrice < marketLow) status = "UNDERPRICED";
+    else if (adPrice > marketHigh) status = "OVERPRICED";
+
+    const GREEN_END = 30, YELLOW_END = 70;
+    function priceToPct(price) {
+      if (price <= marketLow) {
+        const floor = marketLow * 0.6;
+        const ratio = marketLow > floor ? (price - floor) / (marketLow - floor) : 1;
+        return Math.max(0, Math.min(1, ratio)) * GREEN_END;
+      }
+      if (price >= marketHigh) {
+        const ceiling = marketHigh * 1.4;
+        const ratio = ceiling > marketHigh ? (price - marketHigh) / (ceiling - marketHigh) : 1;
+        return YELLOW_END + Math.max(0, Math.min(1, ratio)) * (100 - YELLOW_END);
+      }
+      const ratio = (price - marketLow) / (marketHigh - marketLow);
+      return GREEN_END + ratio * (YELLOW_END - GREEN_END);
+    }
+
+    const cursorPos = priceToPct(adPrice);
+    const badgePos = Math.min(85, Math.max(15, cursorPos));
+    let badgeText, badgeClass;
+    if (status === "UNDERPRICED") {
+      badgeText = `${adPrice.toFixed(0)} € • 🔥 -${Math.round(marketLow - adPrice)} € sous le marché`;
+      badgeClass = "dd-gauge-badge-good";
+    } else if (status === "OVERPRICED") {
+      badgeText = `${adPrice.toFixed(0)} €`;
+      badgeClass = "dd-gauge-badge-bad";
+    } else {
+      badgeText = `${adPrice.toFixed(0)} € • prix du marché`;
+      badgeClass = "dd-gauge-badge-fair";
+    }
+
+    let targetMarkerHtml = "";
+    if (status === "OVERPRICED" && negotiationTarget && negotiationTarget > 0) {
+      const targetPos = priceToPct(negotiationTarget);
+      targetMarkerHtml = `<div class="dd-gauge-target-marker" style="left:${targetPos.toFixed(1)}%;" title="Cible de négociation : ${negotiationTarget.toFixed(0)} €"><div class="dd-gauge-target-line"></div></div>`;
+    }
+
+    return `
+      <div class="dd-price-gauge">
+        <div class="dd-gauge-track">
+          <div class="dd-gauge-zone dd-gauge-zone-green" style="width:${GREEN_END}%;"></div>
+          <div class="dd-gauge-zone dd-gauge-zone-yellow" style="width:${YELLOW_END - GREEN_END}%;"></div>
+          <div class="dd-gauge-zone dd-gauge-zone-red" style="width:${100 - YELLOW_END}%;"></div>
+          ${targetMarkerHtml}
+          <div class="dd-gauge-cursor" style="left:${cursorPos.toFixed(1)}%;"></div>
+        </div>
+        <div class="dd-gauge-badge-row"><span class="dd-gauge-badge ${badgeClass}" style="left:${badgePos.toFixed(1)}%;">${escapeHtml(badgeText)}</span></div>
+        <div class="dd-gauge-legend">
+          <span>🟢 Affaire</span><span>🟡 Marché</span><span>🔴 Surévalué</span>
+          ${targetMarkerHtml ? `<span class="dd-gauge-legend-target">🎯 Cible ${negotiationTarget.toFixed(0)} €</span>` : ""}
+        </div>
+      </div>`;
+  }
+
   function renderResult(a) {
     hideAll();
     document.getElementById("resultSection").style.display = "block";
 
     const score = a.score || 0;
-    const circle = document.getElementById("scoreCircle");
-    circle.className = "score-circle " + (score >= 7 ? "score-good" : score >= 4 ? "score-mid" : "score-bad");
+    const scoreClass = getScoreClass(score);
+    document.getElementById("scoreDisplay").className = "dd-score-display " + scoreClass;
     document.getElementById("scoreValue").textContent = score;
-    document.getElementById("verdictText").textContent = a.verdict || "-";
-    document.getElementById("insightText").textContent = a.avis_general_produit || "Rien de particulier détecté.";
-    document.getElementById("priceDetected").textContent = a.prix_detecte ? `${a.prix_detecte} €` : "Non détecté";
-    document.getElementById("priceTarget").textContent = a.prix_negociation_cible ? `${a.prix_negociation_cible} €` : "-";
+    const verdictEl = document.getElementById("verdictText");
+    verdictEl.textContent = a.verdict || "-";
+    verdictEl.className = "dd-verdict-text " + scoreClass;
 
-    const fortsList = document.getElementById("pointsForts");
-    fortsList.innerHTML = (a.points_forts || []).map((p) => `<li>${escapeHtml(p)}</li>`).join("") || "<li>Aucun point fort particulier identifié.</li>";
+    const confidenceLevel = a.niveau_confiance || "Moyenne";
+    const confidenceIcon = confidenceLevel === "Élevée" ? "🎯" : confidenceLevel === "Moyenne" ? "🔍" : "⚠️";
+    let badgesHtml = `<span class="dd-mini-badge ${getConfidenceClass(confidenceLevel)}">${confidenceIcon} Confiance : ${escapeHtml(confidenceLevel)}</span>`;
+    if (a.vendeur_presse) badgesHtml += `<span class="dd-mini-badge dd-mini-badge-urgency">🏃 Vendeur pressé</span>`;
+    document.getElementById("badgesRow").innerHTML = badgesHtml;
 
-    const attentionList = document.getElementById("pointsAttention");
-    attentionList.innerHTML = (a.points_attention || []).map((p) => `<li>${escapeHtml(p)}</li>`).join("") || "<li>Rien de particulier à signaler.</li>";
+    const insightBox = document.getElementById("insightBox");
+    if (a.avis_general_produit) {
+      insightBox.style.display = "block";
+      document.getElementById("insightText").textContent = a.avis_general_produit;
+    } else {
+      insightBox.style.display = "none";
+    }
 
-    renderNegoMessage("doux");
-    document.querySelectorAll(".nego-tab").forEach((t) => t.classList.remove("active"));
-    document.querySelector('[data-approach="doux"]').classList.add("active");
+    const marketParsed = parseMargeNumbers(a.estimation_marche);
+    const adPrice = typeof a.prix_detecte === "number" ? a.prix_detecte : parseFloat(a.prix_detecte) || 0;
+    const negotiationTarget = typeof a.prix_negociation_cible === "number" ? a.prix_negociation_cible : parseFloat(a.prix_negociation_cible) || null;
+
+    document.getElementById("gaugeSlot").innerHTML = buildPriceGaugeHtml(adPrice, marketParsed, negotiationTarget);
+    document.getElementById("priceDetected").textContent = adPrice ? `${adPrice} €` : "Non détecté";
+
+    let margeDisplay = "N/A", margeNegative = false;
+    if (marketParsed && marketParsed.min > 0 && adPrice) {
+      const rawMin = marketParsed.min - adPrice, rawMax = marketParsed.max - adPrice;
+      margeNegative = rawMax < 0;
+      margeDisplay = margeNegative
+        ? `${rawMin.toFixed(0)} € à ${rawMax.toFixed(0)} €`
+        : `${Math.max(0, rawMin).toFixed(0)} € - ${rawMax.toFixed(0)} €`;
+    }
+    document.getElementById("margeLabel").textContent = margeNegative ? "Perte potentielle" : "Marge revente";
+    const margeEl = document.getElementById("margeValue");
+    margeEl.textContent = margeDisplay;
+    margeEl.className = "dd-stat-value" + (margeNegative ? " dd-stat-value-negative" : "");
+
+    document.getElementById("pointsForts").innerHTML = buildListItems(a.points_forts, "Aucun point fort identifié");
+    document.getElementById("pointsAttention").innerHTML = buildListItems(a.points_attention, "Aucun point d'attention identifié");
+
+    const redFlagsSlot = document.getElementById("redFlagsSlot");
+    redFlagsSlot.innerHTML = (a.red_flags && a.red_flags.length > 0) ? `
+      <div class="dd-section dd-section-redflags">
+        <div class="dd-section-title">⚠️ Red flags détectés</div>
+        <ul class="dd-list dd-list-redflags">${buildListItems(a.red_flags, "Aucun")}</ul>
+      </div>` : "";
+
+    document.getElementById("questionsList").innerHTML = (a.questions_au_vendeur || []).map((q) => `
+      <div class="dd-copy-item">
+        <span class="dd-copy-text">${escapeHtml(q)}</span>
+        <button class="dd-copy-btn" data-copy-text="${escapeHtml(q)}" title="Copier">📋</button>
+      </div>`).join("");
+    document.getElementById("questionsList").querySelectorAll(".dd-copy-btn").forEach((btn) => {
+      btn.addEventListener("click", () => copyToClipboard(btn.getAttribute("data-copy-text"), btn));
+    });
+
+    document.getElementById("pointsVerifier").innerHTML = buildListItems(a.points_a_verifier_sur_place, "Aucun élément spécifique");
+
+    currentNegoApproach = "doux";
+    document.querySelectorAll(".dd-subtab").forEach((t) => t.classList.toggle("dd-subtab-active", t.getAttribute("data-nego") === "doux"));
+    renderNegoMessage();
+
+    document.querySelectorAll(".dd-tab").forEach((t) => t.classList.toggle("dd-tab-active", t.getAttribute("data-tab") === "analyse"));
+    document.querySelectorAll(".dd-tab-panel").forEach((p) => p.classList.toggle("dd-tab-panel-active", p.getAttribute("data-tab-panel") === "analyse"));
   }
 
-  function renderNegoMessage(approach) {
-    const msg = lastAnalysis?.messages_negociation?.[approach] || "Message non disponible.";
-    document.getElementById("negoMessage").textContent = msg;
+  function renderNegoMessage() {
+    document.getElementById("negoMessage").textContent = lastAnalysis?.messages_negociation?.[currentNegoApproach] || "Message non disponible.";
   }
 
-  document.querySelectorAll(".nego-tab").forEach((tab) => {
+  document.querySelectorAll(".dd-subtab").forEach((tab) => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".nego-tab").forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      renderNegoMessage(tab.getAttribute("data-approach"));
+      document.querySelectorAll(".dd-subtab").forEach((t) => t.classList.remove("dd-subtab-active"));
+      tab.classList.add("dd-subtab-active");
+      currentNegoApproach = tab.getAttribute("data-nego");
+      renderNegoMessage();
     });
   });
 
-  document.getElementById("copyNegoBtn").addEventListener("click", () => {
-    const text = document.getElementById("negoMessage").textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById("copyNegoBtn");
-      const original = btn.textContent;
-      btn.textContent = "✅ Copié !";
-      setTimeout(() => { btn.textContent = original; }, 1500);
+  document.querySelectorAll(".dd-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.getAttribute("data-tab");
+      document.querySelectorAll(".dd-tab").forEach((t) => t.classList.toggle("dd-tab-active", t === tab));
+      document.querySelectorAll(".dd-tab-panel").forEach((p) => p.classList.toggle("dd-tab-panel-active", p.getAttribute("data-tab-panel") === target));
     });
   });
+
+  document.getElementById("copyNegoBtn").addEventListener("click", (e) => {
+    copyToClipboard(document.getElementById("negoMessage").textContent, e.currentTarget);
+  });
+
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = "✅";
+      btn.classList.add("dd-copy-success");
+      setTimeout(() => { btn.textContent = original; btn.classList.remove("dd-copy-success"); }, 1200);
+    });
+  }
 
   document.getElementById("newScanBtn").addEventListener("click", () => {
-    selectedFile = null;
-    selectedFileBase64 = null;
-    fileInput.value = "";
-    document.getElementById("previewImg").style.display = "none";
-    document.getElementById("uploadZoneContent").style.display = "block";
-    uploadZone.classList.remove("has-image");
+    selectedImages = [];
+    renderThumbs();
     updateAnalyzeButtonState();
     hideAll();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  /* ===================== INDICATION D'INSTALLATION ===================== */
   window.addEventListener("beforeinstallprompt", () => {
     document.getElementById("installHint").style.display = "block";
   });
 
-  /* ===================== INIT ===================== */
   applyMode(currentMode);
 </script>
 

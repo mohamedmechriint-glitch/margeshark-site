@@ -203,7 +203,7 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
   body {
     font-family: "IBM Plex Sans", -apple-system, sans-serif;
@@ -310,6 +310,10 @@
     font-size: 16.5px;
     font-weight: 700;
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .nav-links {
@@ -331,6 +335,7 @@
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .nav-cta:hover { opacity: 0.88; }
@@ -346,6 +351,7 @@
     cursor: pointer;
     white-space: nowrap;
     font-family: inherit;
+    flex-shrink: 0;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
 
@@ -490,7 +496,37 @@
 
   @media (max-width: 780px) {
     .nav-links { display: none; }
+
+    .nav-inner {
+      padding: 12px 14px;
+      gap: 8px;
+    }
+
+    .nav-logo { width: 38px; height: 38px; }
+
+    .nav-brand { font-size: 14px; }
+
+    .nav-login-btn {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .nav-cta {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
   }
+
+  .nav-cta .nav-cta-short { display: none; }
+
+  @media (max-width: 380px) {
+    /* Sur les très petits écrans (iPhone SE et similaires), même les
+       versions déjà réduites ci-dessus peuvent encore déborder - on
+       raccourcit le texte du bouton principal en dernier recours. */
+    .nav-cta .nav-cta-full { display: none; }
+    .nav-cta .nav-cta-short { display: inline; }
+  }
+
 
   /* ===== HERO ===== */
   .hero {
@@ -1206,7 +1242,8 @@
 
   .footer-links {
     display: flex;
-    gap: 24px;
+    flex-wrap: wrap;
+    gap: 10px 24px;
     font-size: 12.5px;
     color: var(--text-dim);
   }
@@ -1419,7 +1456,7 @@
         <a href="#faq">FAQ</a>
       </div>
       <button class="nav-login-btn" id="navLoginBtn" type="button">Connexion</button>
-      <a class="nav-cta" href="#tarifs">Installer l'extension</a>
+      <a class="nav-cta" href="#tarifs"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
     </div>
   </nav>
 
@@ -1583,7 +1620,7 @@
       </div>
 
       <div class="dd-product-insight" style="max-width:640px;margin:0 auto 20px;">
-        <div class="dd-product-insight-title">⚠️ Ce que le vendeur ne te dira jamais</div>
+        <div class="dd-product-insight-title">🎯 Le vrai piège de cette annonce</div>
         <p class="dd-product-insight-text" id="negoInsightText">Courroie de distribution à prévoir vers 160 000 km si jamais changée - à vérifier dans le carnet d'entretien. Embrayage à tester à l'essai.</p>
         <p class="dd-product-insight-tip" id="negoInsightTip">💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.</p>
         <div class="dd-product-insight-disclaimer">Basé sur les connaissances générales de l'IA (pas de recherche en temps réel).</div>
@@ -1982,7 +2019,7 @@
           sub: "Mercedes Classe E 220d - 9 ans, 130 000 km · 15 000 €",
           seller: "Julien",
           price: 15000,
-          insight: "Ce fameux confort \"tapis volant\" Mercedes peut te coûter jusqu'à 3000€ par coin de réparation. Sur cette génération, les coussins de la suspension pneumatique commencent à fuir après 8-10 ans - et le vendeur ne le mentionnera jamais spontanément. Un seul geste suffit pour le savoir : regarde si la voiture s'est affaissée après une nuit sans rouler.",
+          insight: "3000€. C'est ce que peut coûter UN SEUL coin de suspension pneumatique qui commence à fuir sur cette génération de Mercedes - une panne quasi systématique après 8-10 ans, que le vendeur ne mentionnera jamais de lui-même. Un seul indice trahit le problème : la voiture s'affaisse toute seule après une nuit sans rouler.",
           tip: "💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressé et disponible pour venir voir le véhicule rapidement, au prix affiché. Est-il toujours disponible ?", target: 15000 },
@@ -1994,7 +2031,7 @@
           sub: "Trottinette électrique 25km/h - 1 an · 250 €",
           seller: "Manon",
           price: 250,
-          insight: "Tu peux payer 250€, te faire arrêter par la police deux semaines plus tard, et perdre à la fois la trottinette ET ton argent - sans aucun recours. Une part importante des trottinettes d'occasion sont en réalité volées. Le seul rempart : vérifier le numéro de série sur un registre national avant même de te déplacer.",
+          insight: "250€ envolés, trottinette confisquée par la police, et ZÉRO recours. C'est le scénario classique avec une trottinette volée - un marché parallèle bien plus fréquent qu'on ne le pense. La parade : un numéro de série vérifié AVANT de te déplacer, pas après.",
           tip: "💡 Conseil : demande le numéro de série par message et vérifie-le AVANT de te déplacer.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 250 },
@@ -2006,7 +2043,7 @@
           sub: "Appareil photo hybride 24MP + objectif - 3 ans · 450 €",
           seller: "Thomas",
           price: 450,
-          insight: "\"Très peu servi\", vraiment ? Beaucoup de vendeurs mentent sans même s'en rendre compte sur l'usure réelle de leur appareil. La bonne nouvelle : un simple site gratuit démasque le mensonge en 2 minutes, à partir d'UNE seule photo envoyée par message.",
+          insight: "\"Très peu servi\" - la phrase la plus répétée sur Leboncoin, et souvent la moins vraie. Le compteur de déclenchement de l'appareil, lui, ne ment JAMAIS. Une seule photo envoyée par message suffit pour le lire, gratuitement, en 2 minutes.",
           tip: "💡 Conseil : demande cette photo par message, avant même de prendre rendez-vous.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 450 },
@@ -2018,7 +2055,7 @@
           sub: "Moto 125cc - 5 ans, 12 000 km · 3 200 €",
           seller: "Yanis",
           price: 3200,
-          insight: "Un cadre légèrement tordu, invisible à l'œil nu, peut te faire perdre le contrôle en pleine courbe à 90 km/h. Beaucoup de motos accidentées sont réparées en apparence, puis revendues sans jamais être déclarées à l'assurance. Un seul réflexe : l'historique Histovec, gratuit, avant de signer quoi que ce soit.",
+          insight: "Un cadre légèrement tordu, invisible à l'œil nu, peut te faire perdre le contrôle en PLEINE COURBE à 90 km/h. Des motos accidentées circulent en occasion, réparées en apparence, jamais déclarées à l'assurance. Un rapport Histovec gratuit règle la question en 2 minutes, avant même de te déplacer.",
           tip: "💡 Conseil : demande la plaque d'immatriculation par message, puis vérifie sur Histovec.fr (gratuit, 2 minutes) avant de te déplacer.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la voir rapidement, au prix affiché. Est-elle toujours disponible ?", target: 3200 },
@@ -2030,7 +2067,7 @@
           sub: "PC portable gaming RTX - 2 ans · 750 €",
           seller: "Enzo",
           price: 750,
-          insight: "\"Comme neuf\" peut en réalité cacher des mois entiers à tourner à fond, 24h/24, pour miner de la cryptomonnaie - la carte graphique en ressort usée bien plus vite qu'un usage normal ne le laisserait penser. Un logiciel gratuit dévoile la vérité en 2 minutes, en direct devant toi.",
+          insight: "\"Comme neuf\" peut cacher des mois entiers à tourner à FOND, 24h/24, pour miner de la cryptomonnaie - la carte graphique en ressort épuisée bien avant l'heure. Un logiciel gratuit dévoile la vérité en direct, devant toi, en 2 minutes.",
           tip: "💡 Conseil : demande à voir HWiNFO (gratuit) tourner en direct sur place avant de payer.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 750 },
@@ -2042,7 +2079,7 @@
           sub: "Bague en or annoncée 18 carats · 280 €",
           seller: "Sarah",
           price: 280,
-          insight: "280€ pour un bijou qui n'est peut-être qu'un vulgaire plaquage doré sur du métal bas de gamme - et souvent, même le vendeur l'ignore. Le test qui ne ment jamais : un simple aimant. L'or véritable n'est jamais magnétique. 5 secondes suffisent pour le savoir.",
+          insight: "280€ pour un bijou qui n'est peut-être qu'un vulgaire plaquage doré sur du métal bas de gamme - et souvent, même le vendeur l'ignore. Le test qui ne ment JAMAIS : un simple aimant. L'or véritable n'est jamais magnétique. 5 secondes suffisent pour le savoir.",
           tip: "💡 Conseil : glisse un petit aimant dans ta poche avant le rendez-vous, ça prend 5 secondes.",
           messages: {
             rapide: { text: "Bonjour, je suis intéressée et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 280 },
