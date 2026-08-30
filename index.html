@@ -1398,6 +1398,59 @@
     color: var(--teal);
   }
 
+  /* ===== JAUGE DE PRIX (portée depuis l'extension) ===== */
+  .dd-price-gauge {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px 18px 12px 18px;
+    max-width: 640px;
+    margin: 0 auto 20px;
+  }
+  .dd-gauge-header {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .dd-gauge-track {
+    position: relative;
+    height: 10px;
+    border-radius: 999px;
+    overflow: visible;
+    display: flex;
+    margin: 6px 0 26px 0;
+  }
+  .dd-gauge-zone { height: 100%; }
+  .dd-gauge-zone-green { background: #4ade80; border-radius: 999px 0 0 999px; }
+  .dd-gauge-zone-yellow { background: #fbbf24; }
+  .dd-gauge-zone-red { background: #f87171; border-radius: 0 999px 999px 0; }
+  .dd-gauge-cursor {
+    position: absolute; top: 50%; width: 18px; height: 18px; border-radius: 50%;
+    background: #0f172a; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    transform: translate(-50%, -50%); z-index: 2;
+  }
+  .dd-gauge-badge-row { position: relative; height: 24px; }
+  .dd-gauge-badge {
+    position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap;
+    font-size: 12px; font-weight: 800; padding: 5px 12px; border-radius: 999px;
+  }
+  .dd-gauge-badge-good { background: rgba(74, 222, 128, 0.18); color: #4ade80; }
+  .dd-gauge-badge-bad { background: rgba(248, 113, 113, 0.18); color: #f87171; }
+  .dd-gauge-badge-fair { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+  .dd-gauge-legend {
+    display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+    font-size: 10.5px; color: #64748b; font-weight: 600;
+  }
+  .dd-gauge-margin-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid #334155;
+    font-size: 12.5px;
+  }
+  .dd-gauge-margin-label { color: #94a3b8; font-weight: 600; }
+  .dd-gauge-margin-value { font-weight: 800; color: #4ade80; }
+
   /* Style identique à l'encart "Défauts connus" du vrai widget de l'extension */
   .dd-product-insight {
     background: rgba(251, 191, 36, 0.06);
@@ -1605,39 +1658,53 @@
   <section class="section deep" id="nego-preview">
     <div class="wrap">
       <div class="section-head">
-        <span class="section-eyebrow">// PRÊT À COPIER</span>
-        <h2>Le message qui fait baisser le prix</h2>
-        <p>Le vendeur ne te dira jamais ça spontanément. Trois messages prêts à copier, qui s'appuient sur de vrais pièges connus - pas des formules bateau.</p>
+        <span class="section-eyebrow">// ANALYSE RÉELLE</span>
+        <h2>La panne qu'il ne mentionnera jamais</h2>
+        <p>6 voitures parmi les plus vendues en occasion en France, avec leurs pannes connues et un vrai positionnement prix/marché - pas des généralités.</p>
       </div>
 
       <div class="nego-product-tabs">
-        <button class="nego-product-tab active" data-product="voiture">🚗 Voiture</button>
-        <button class="nego-product-tab" data-product="trottinette">🛴 Trottinette</button>
-        <button class="nego-product-tab" data-product="appareilphoto">📸 Appareil photo</button>
-        <button class="nego-product-tab" data-product="moto">🏍️ Moto</button>
-        <button class="nego-product-tab" data-product="pcgaming">💻 PC gaming</button>
-        <button class="nego-product-tab" data-product="bijou">💍 Bijou en or</button>
+        <button class="nego-product-tab active" data-product="peugeot208">🚗 Peugeot 208</button>
+        <button class="nego-product-tab" data-product="golf">🚙 VW Golf</button>
+        <button class="nego-product-tab" data-product="bmw320d">🏎️ BMW Série 3</button>
+        <button class="nego-product-tab" data-product="clio">🚗 Renault Clio</button>
+        <button class="nego-product-tab" data-product="c3">🚘 Citroën C3</button>
+        <button class="nego-product-tab" data-product="sandero">🚗 Dacia Sandero</button>
       </div>
 
       <div class="dd-product-insight" style="max-width:640px;margin:0 auto 20px;">
         <div class="dd-product-insight-title">🎯 Le vrai piège de cette annonce</div>
-        <p class="dd-product-insight-text" id="negoInsightText">Courroie de distribution à prévoir vers 160 000 km si jamais changée - à vérifier dans le carnet d'entretien. Embrayage à tester à l'essai.</p>
-        <p class="dd-product-insight-tip" id="negoInsightTip">💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.</p>
-        <div class="dd-product-insight-disclaimer">Basé sur les connaissances générales de l'IA (pas de recherche en temps réel).</div>
+        <p class="dd-product-insight-text" id="negoInsightText"></p>
+        <p class="dd-product-insight-tip" id="negoInsightTip"></p>
+        <div class="dd-product-insight-disclaimer">Basé sur des pannes documentées publiquement pour ce modèle - à vérifier sur l'exemplaire précis (millésime, historique d'entretien).</div>
       </div>
 
-      <div class="nego-approach-tabs">
-        <button class="nego-approach-tab" data-approach="rapide">⚡ Rapide</button>
-        <button class="nego-approach-tab active" data-approach="doux">🤝 Courtois</button>
-        <button class="nego-approach-tab" data-approach="agressif">💪 Appuyé</button>
+      <div class="dd-price-gauge">
+        <div class="dd-gauge-header" id="negoProductSub">Peugeot 208 1.2 PureTech - 2015, 92 000 km · 8 500 €</div>
+        <div class="dd-gauge-track">
+          <div class="dd-gauge-zone dd-gauge-zone-green" style="width:30%;"></div>
+          <div class="dd-gauge-zone dd-gauge-zone-yellow" style="width:40%;"></div>
+          <div class="dd-gauge-zone dd-gauge-zone-red" style="width:30%;"></div>
+          <div class="dd-gauge-cursor" id="negoGaugeCursor"></div>
+        </div>
+        <div class="dd-gauge-badge-row">
+          <span class="dd-gauge-badge" id="negoGaugeBadge"></span>
+        </div>
+        <div class="dd-gauge-legend">
+          <span>🟢 Affaire</span><span>🟡 Marché</span><span>🔴 Surévalué</span>
+        </div>
+        <div class="dd-gauge-margin-row">
+          <span class="dd-gauge-margin-label">💰 Marge potentielle à la revente</span>
+          <span class="dd-gauge-margin-value" id="negoMarginValue">+700 €</span>
+        </div>
       </div>
 
       <div class="nego-preview-box">
         <div class="nego-preview-header">
           <div class="nego-preview-avatar" id="negoAvatar">👤</div>
           <div>
-            <div class="nego-preview-name" id="negoSellerName">Julien</div>
-            <div class="nego-preview-sub" id="negoProductSub">Peugeot 208 essence - 8 ans, 95 000 km · 6 500 €</div>
+            <div class="nego-preview-name" id="negoSellerName">Karim</div>
+            <div class="nego-preview-sub">Message prêt à copier</div>
           </div>
         </div>
         <div class="nego-bubble-wrap">
@@ -2012,121 +2079,142 @@
       document.getElementById("loginCodeInput").value = "";
     });
 
-    /* ===== APERÇU MESSAGE DE NÉGOCIATION (3 produits sélectionnables) ===== */
+    /* ===== ANALYSE VOITURE (6 modèles très vendus, jauge de prix) ===== */
     (function () {
-      const PRODUCTS = {
-        voiture: {
-          sub: "Mercedes Classe E 220d - 9 ans, 130 000 km · 15 000 €",
-          seller: "Julien",
-          price: 15000,
-          insight: "3000€. C'est ce que peut coûter UN SEUL coin de suspension pneumatique qui commence à fuir sur cette génération de Mercedes - une panne quasi systématique après 8-10 ans, que le vendeur ne mentionnera jamais de lui-même. Un seul indice trahit le problème : la voiture s'affaisse toute seule après une nuit sans rouler.",
-          tip: "💡 Conseil : demande un rendez-vous tôt le matin, avant que la voiture n'ait roulé - c'est là que l'affaissement se voit le mieux.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir voir le véhicule rapidement, au prix affiché. Est-il toujours disponible ?", target: 15000 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Avez-vous remarqué si la voiture s'affaisse légèrement après une nuit sans rouler ? C'est souvent le signe d'une suspension pneumatique qui commence à fuir sur ce modèle. Seriez-vous ouvert à 13 500€ ?", target: 13500 },
-            agressif: { text: "Bonjour, sur cette génération la suspension pneumatique commence souvent à fuir après 8-10 ans - un remplacement à 1500-3000€ par coin si c'est le cas. Je vous propose 12 000€, disponible pour venir aujourd'hui.", target: 12000 }
-          }
+      const CARS = {
+        peugeot208: {
+          sub: "Peugeot 208 1.2 PureTech - 2015, 92 000 km · 8 500 €",
+          seller: "Karim",
+          price: 8500,
+          marketLow: 9200,
+          marketHigh: 10800,
+          insight: "Sur cette génération (avant 2018), la courroie de distribution baigne directement dans l'huile moteur - un choix technique qui a mal vieilli. Elle finit par se désagréger et boucher la crépine d'huile, avec une casse moteur à la clé, parfois sans aucun signe avant-coureur.",
+          tip: "💡 Conseil : demande le carnet d'entretien et cherche une mention de changement de courroie/distribution - sans ça, budgète 800€ de sécurité avant même de rouler.",
+          message: "Bonjour, votre annonce m'intéresse. Avez-vous le justificatif de changement de la courroie de distribution ? Sur ce modèle avant 2018, c'est un point qui peut coûter cher si ça n'a jamais été fait. Seriez-vous ouvert à 7 800€ ?"
         },
-        trottinette: {
-          sub: "Trottinette électrique 25km/h - 1 an · 250 €",
-          seller: "Manon",
-          price: 250,
-          insight: "250€ envolés, trottinette confisquée par la police, et ZÉRO recours. C'est le scénario classique avec une trottinette volée - un marché parallèle bien plus fréquent qu'on ne le pense. La parade : un numéro de série vérifié AVANT de te déplacer, pas après.",
-          tip: "💡 Conseil : demande le numéro de série par message et vérifie-le AVANT de te déplacer.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 250 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Auriez-vous la facture d'achat d'origine ou le numéro de série pour que je puisse vérifier qu'elle n'est pas déclarée volée ? Seriez-vous ouvert à 210€ ?", target: 210 },
-            agressif: { text: "Bonjour, je n'achète que sur présentation de la facture d'origine - trop de trottinettes d'occasion sont volées et confisquées après coup, sans remboursement. Je vous propose 180€, facture à l'appui.", target: 180 }
-          }
+        golf: {
+          sub: "Volkswagen Golf 7 1.4 TSI DSG - 2016, 95 000 km · 11 000 €",
+          seller: "Léa",
+          price: 11000,
+          marketLow: 12200,
+          marketHigh: 13800,
+          insight: "La boîte robotisée DSG7 (DQ200) qui équipe cette génération est connue pour des pannes de mécatronique entre 70 000 et 150 000 km - à-coups, voyant boîte allumé, parfois blocage complet. La pièce reconditionnée tourne autour de 1000€, en concession bien plus.",
+          tip: "💡 Conseil : fais un essai avec plusieurs démarrages à froid - c'est là que les à-coups de la DQ200 se manifestent le plus souvent.",
+          message: "Bonjour, votre annonce m'intéresse. Avez-vous remarqué des à-coups au démarrage à froid avec la boîte DSG ? C'est un point de vigilance connu sur ce modèle. Seriez-vous ouvert à 9 800€ ?"
         },
-        appareilphoto: {
-          sub: "Appareil photo hybride 24MP + objectif - 3 ans · 450 €",
-          seller: "Thomas",
-          price: 450,
-          insight: "\"Très peu servi\" - la phrase la plus répétée sur Leboncoin, et souvent la moins vraie. Le compteur de déclenchement de l'appareil, lui, ne ment JAMAIS. Une seule photo envoyée par message suffit pour le lire, gratuitement, en 2 minutes.",
-          tip: "💡 Conseil : demande cette photo par message, avant même de prendre rendez-vous.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 450 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Pourriez-vous m'envoyer une photo prise avec l'appareil ? Un site gratuit permet de connaître le nombre réel de photos prises, pour confirmer l'état annoncé. Seriez-vous ouvert à 390€ ?", target: 390 },
-            agressif: { text: "Bonjour, sans vérifier le nombre réel de photos prises (possible en 2 minutes à partir d'une seule photo, via un site gratuit), impossible de confirmer qu'il est vraiment \"très peu servi\". Je vous propose 340€, sous réserve de cette vérification.", target: 340 }
-          }
-        },
-        moto: {
-          sub: "Moto 125cc - 5 ans, 12 000 km · 3 200 €",
+        bmw320d: {
+          sub: "BMW 320d Série 3 - 2012, 140 000 km · 9 500 €",
           seller: "Yanis",
-          price: 3200,
-          insight: "Un cadre légèrement tordu, invisible à l'œil nu, peut te faire perdre le contrôle en PLEINE COURBE à 90 km/h. Des motos accidentées circulent en occasion, réparées en apparence, jamais déclarées à l'assurance. Un rapport Histovec gratuit règle la question en 2 minutes, avant même de te déplacer.",
-          tip: "💡 Conseil : demande la plaque d'immatriculation par message, puis vérifie sur Histovec.fr (gratuit, 2 minutes) avant de te déplacer.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir la voir rapidement, au prix affiché. Est-elle toujours disponible ?", target: 3200 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Avez-vous l'historique Histovec du véhicule ? Je veux m'assurer qu'elle n'a jamais eu de sinistre non déclaré. Seriez-vous ouvert à 2 850€ ?", target: 2850 },
-            agressif: { text: "Bonjour, je n'achète qu'après vérification de l'historique Histovec - trop de motos accidentées sont réparées puis revendues sans déclaration. Je vous propose 2 500€, sous réserve de ce contrôle.", target: 2500 }
-          }
+          price: 9500,
+          marketLow: 11200,
+          marketHigh: 13000,
+          insight: "Le moteur diesel N47 (2007-2015) souffre d'un défaut bien documenté sur la chaîne de distribution, positionnée côté boîte de vitesses - une zone qui chauffe trop. Résultat : usure prématurée, bruit métallique au démarrage, et une casse qui peut atteindre 3000€ de réparation.",
+          tip: "💡 Conseil : démarre le moteur à froid et écoute un cliquetis métallique dans les 2-3 premières secondes - c'est le signe classique d'une chaîne détendue.",
+          message: "Bonjour, votre annonce m'intéresse. Le moteur de cette génération a un point de vigilance connu sur la chaîne de distribution - avez-vous déjà entendu un bruit métallique au démarrage à froid ? Seriez-vous ouvert à 8 200€ ?"
         },
-        pcgaming: {
-          sub: "PC portable gaming RTX - 2 ans · 750 €",
-          seller: "Enzo",
-          price: 750,
-          insight: "\"Comme neuf\" peut cacher des mois entiers à tourner à FOND, 24h/24, pour miner de la cryptomonnaie - la carte graphique en ressort épuisée bien avant l'heure. Un logiciel gratuit dévoile la vérité en direct, devant toi, en 2 minutes.",
-          tip: "💡 Conseil : demande à voir HWiNFO (gratuit) tourner en direct sur place avant de payer.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressé et disponible pour venir le récupérer rapidement, au prix affiché. Est-il toujours disponible ?", target: 750 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Le PC a-t-il déjà servi au minage de cryptomonnaie ? Ça use la carte graphique bien plus vite qu'un usage normal. Seriez-vous ouvert à 640€ ?", target: 640 },
-            agressif: { text: "Bonjour, sans certitude que ce PC n'a jamais servi au minage de cryptomonnaie (très fréquent sur ce type de configuration revendue), je limite mon offre. Je vous propose 560€, sous réserve d'une vérification rapide.", target: 560 }
-          }
+        clio: {
+          sub: "Renault Clio IV dCi - 2017, 78 000 km · 7 200 €",
+          seller: "Manon",
+          price: 7200,
+          marketLow: 7000,
+          marketHigh: 7800,
+          insight: "Les lève-vitres électriques de cette génération sont un grand classique des pannes Renault - le mécanisme lâche souvent avant 100 000 km, et une vitre coincée en position basse un jour de pluie n'a rien d'anecdotique. Sur les versions dCi, les injecteurs méritent aussi une vérification au-delà de 100 000 km.",
+          tip: "💡 Conseil : teste TOUTES les vitres électriques à l'essai, y compris à l'arrière - ça prend 30 secondes et ça évite une mauvaise surprise.",
+          message: "Bonjour, votre annonce m'intéresse. Est-ce que toutes les vitres électriques fonctionnent normalement ? C'est un point qui lâche assez souvent sur ce modèle. Seriez-vous ouvert à 6 600€ ?"
         },
-        bijou: {
-          sub: "Bague en or annoncée 18 carats · 280 €",
+        c3: {
+          sub: "Citroën C3 PureTech - 2019, 58 000 km · 9 800 €",
+          seller: "Thomas",
+          price: 9800,
+          marketLow: 9600,
+          marketHigh: 10600,
+          insight: "Cette génération partage le même moteur 1.2 PureTech que la Peugeot 208 - et donc potentiellement le même défaut de courroie de distribution immergée dans l'huile, selon la date de fabrication exacte du bloc moteur, pas juste l'année du véhicule.",
+          tip: "💡 Conseil : demande la date de fabrication précise du moteur - Peugeot/Citroën ont fiabilisé le circuit progressivement, pas d'un coup sur toute la gamme.",
+          message: "Bonjour, votre annonce m'intéresse. Le moteur PureTech de ce modèle a eu des soucis de courroie de distribution sur certains millésimes - avez-vous une trace d'intervention dans le carnet d'entretien ? Seriez-vous ouvert à 9 000€ ?"
+        },
+        sandero: {
+          sub: "Dacia Sandero TCe - 2020, 45 000 km · 8 900 €",
           seller: "Sarah",
-          price: 280,
-          insight: "280€ pour un bijou qui n'est peut-être qu'un vulgaire plaquage doré sur du métal bas de gamme - et souvent, même le vendeur l'ignore. Le test qui ne ment JAMAIS : un simple aimant. L'or véritable n'est jamais magnétique. 5 secondes suffisent pour le savoir.",
-          tip: "💡 Conseil : glisse un petit aimant dans ta poche avant le rendez-vous, ça prend 5 secondes.",
-          messages: {
-            rapide: { text: "Bonjour, je suis intéressée et disponible pour venir la récupérer rapidement, au prix affiché. Est-elle toujours disponible ?", target: 280 },
-            doux: { text: "Bonjour, votre annonce m'intéresse. Accepteriez-vous que je fasse un test rapide à l'aimant sur place avant de payer ? Ça permet de confirmer que ce n'est pas juste un plaquage doré. Seriez-vous ouvert à 230€ ?", target: 230 },
-            agressif: { text: "Bonjour, je n'achète qu'après un test à l'aimant sur place - trop de bijoux \"en or\" ne sont en réalité qu'un plaquage. Je vous propose 190€, sous réserve de ce test très simple.", target: 190 }
-          }
+          price: 8900,
+          marketLow: 8600,
+          marketHigh: 9400,
+          insight: "Moins de complexité technique que la concurrence sur ce modèle - pas de boîte robotisée à risque, pas de courroie immergée dans l'huile. Le point de vigilance est plus classique : une distribution à courroie standard à changer selon l'intervalle constructeur, souvent négligée par les premiers propriétaires sur un budget serré.",
+          tip: "💡 Conseil : vérifie simplement la date du dernier changement de courroie de distribution dans le carnet - aucun mystère technique ici, juste de la rigueur d'entretien.",
+          message: "Bonjour, votre annonce m'intéresse. Avez-vous une trace du dernier changement de courroie de distribution dans le carnet d'entretien ? Seriez-vous ouvert à 8 300€ ?"
         }
       };
 
-      let currentProduct = "voiture";
-      let currentApproach = "doux";
+      let currentCar = "peugeot208";
 
       const productTabs = document.querySelectorAll(".nego-product-tab");
-      const approachTabs = document.querySelectorAll(".nego-approach-tab");
       const messageEl = document.getElementById("negoMessageText");
       const insightEl = document.getElementById("negoInsightText");
+      const tipEl = document.getElementById("negoInsightTip");
       const subEl = document.getElementById("negoProductSub");
       const nameEl = document.getElementById("negoSellerName");
+      const cursorEl = document.getElementById("negoGaugeCursor");
+      const badgeEl = document.getElementById("negoGaugeBadge");
+      const marginEl = document.getElementById("negoMarginValue");
 
       const fmt = (n) => n.toLocaleString("fr-FR") + " €";
 
-      const tipEl = document.getElementById("negoInsightTip");
+      // Même logique de positionnement que la jauge de l'extension (zones à
+      // largeur fixe 30/40/30%, pas proportionnelles aux montants réels).
+      function priceToPct(price, marketLow, marketHigh) {
+        const GREEN_END = 30, YELLOW_END = 70;
+        if (price <= marketLow) {
+          const floor = marketLow * 0.85;
+          const ratio = marketLow > floor ? (price - floor) / (marketLow - floor) : 1;
+          return Math.max(0, Math.min(1, ratio)) * GREEN_END;
+        }
+        if (price >= marketHigh) {
+          const ceiling = marketHigh * 1.15;
+          const ratio = ceiling > marketHigh ? (price - marketHigh) / (ceiling - marketHigh) : 1;
+          return YELLOW_END + Math.max(0, Math.min(1, ratio)) * (100 - YELLOW_END);
+        }
+        const ratio = (price - marketLow) / (marketHigh - marketLow);
+        return GREEN_END + ratio * (YELLOW_END - GREEN_END);
+      }
 
       function render() {
-        const product = PRODUCTS[currentProduct];
-        const approach = product.messages[currentApproach];
-        messageEl.textContent = approach.text;
-        insightEl.textContent = product.insight;
-        tipEl.textContent = product.tip;
-        subEl.textContent = product.sub;
-        nameEl.textContent = product.seller;
+        const car = CARS[currentCar];
+        messageEl.textContent = car.message;
+        insightEl.textContent = car.insight;
+        tipEl.textContent = car.tip;
+        subEl.textContent = car.sub;
+        nameEl.textContent = car.seller;
+
+        const cursorPos = priceToPct(car.price, car.marketLow, car.marketHigh);
+        cursorEl.style.left = cursorPos.toFixed(1) + "%";
+        badgeEl.style.left = Math.min(85, Math.max(15, cursorPos)).toFixed(1) + "%";
+
+        const margin = car.marketLow - car.price;
+
+        if (car.price < car.marketLow) {
+          badgeEl.textContent = `${fmt(car.price)} • 🔥 sous le marché`;
+          badgeEl.className = "dd-gauge-badge dd-gauge-badge-good";
+        } else if (car.price > car.marketHigh) {
+          badgeEl.textContent = fmt(car.price);
+          badgeEl.className = "dd-gauge-badge dd-gauge-badge-bad";
+        } else {
+          badgeEl.textContent = `${fmt(car.price)} • prix du marché`;
+          badgeEl.className = "dd-gauge-badge dd-gauge-badge-fair";
+        }
+
+        if (margin > 0) {
+          marginEl.textContent = "+" + fmt(margin);
+          marginEl.style.color = "#4ade80";
+        } else {
+          marginEl.textContent = fmt(margin);
+          marginEl.style.color = "#94a3b8";
+        }
       }
 
       productTabs.forEach((tab) => {
         tab.addEventListener("click", () => {
           productTabs.forEach((t) => t.classList.remove("active"));
           tab.classList.add("active");
-          currentProduct = tab.getAttribute("data-product");
-          render();
-        });
-      });
-
-      approachTabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          approachTabs.forEach((t) => t.classList.remove("active"));
-          tab.classList.add("active");
-          currentApproach = tab.getAttribute("data-approach");
+          currentCar = tab.getAttribute("data-product");
           render();
         });
       });
@@ -2145,6 +2233,7 @@
       }
     })();
   </script>
+
 
 </body>
 </html>
