@@ -32,7 +32,12 @@
     background: var(--ocean-deep);
     color: var(--text-hi);
     line-height: 1.55;
+    /* Masqué par défaut - ne s'affiche qu'une fois la session confirmée par
+       checkAuthOrRedirect(), pour éviter le "flash" d'un espace client vide
+       avant la redirection quand l'utilisateur n'est pas connecté. */
+    visibility: hidden;
   }
+  body.auth-verified { visibility: visible; }
 
   h1, h2, h3, .display { font-family: "Space Grotesk", -apple-system, sans-serif; letter-spacing: -0.01em; }
   .mono { font-family: "IBM Plex Mono", monospace; }
@@ -1085,7 +1090,12 @@
       });
 
       if (!response.ok) {
-        window.location.href = "https://margeshark.fr/#connexion";
+        // .replace() plutôt que .href : n'ajoute PAS d'entrée dans
+        // l'historique du navigateur. Sans ça, un clic sur "précédent"
+        // depuis la page de connexion pouvait restaurer cette page espace
+        // client (via le cache précédent/suivant du navigateur) dans son
+        // état d'avant-redirection, vide et trompeur.
+        window.location.replace("https://margeshark.fr/#connexion");
         return false;
       }
 
@@ -1116,15 +1126,29 @@
         profileNameEl.textContent = data.name || currentUserEmail || "Mon compte";
       }
 
+      document.body.classList.add("auth-verified");
       return true;
     } catch (error) {
       // Si le backend est injoignable, on n'affiche pas une redirection en
       // boucle infinie : on prévient simplement, sans bloquer l'accès à la
       // maquette (utile pour tester cette page en local/hors ligne).
       console.warn("[MargeShark] Impossible de vérifier la session :", error);
+      document.body.classList.add("auth-verified");
       return true;
     }
   }
+
+  // Filet de sécurité supplémentaire : si le navigateur restaure malgré
+  // tout cette page depuis son cache précédent/suivant (bfcache) - par
+  // exemple sur un ancien navigateur qui ignore .replace() - on relance la
+  // vérification à ce moment précis plutôt que de laisser un contenu
+  // potentiellement obsolète ou non vérifié visible.
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      document.body.classList.remove("auth-verified");
+      checkAuthOrRedirect();
+    }
+  });
 
   async function realLogout() {
     try {
