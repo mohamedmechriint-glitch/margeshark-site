@@ -721,15 +721,23 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
       ? `Voici ${images.length} captures d'écran censées provenir de la MÊME annonce Leboncoin. Vérifie D'ABORD leur cohérence (voir consigne ci-dessus), puis si elles sont cohérentes, combine leurs informations, lis le titre, le prix, la description et tout critère technique visible, et analyse selon les règles ci-dessus.`
       : "Voici une capture d'écran d'une annonce Leboncoin. Lis le titre, le prix et la description visibles, puis analyse selon les règles ci-dessus.";
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension + goldPriceContext }] },
-        contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 3072, responseMimeType: "application/json" }
-      })
-    });
+    let response;
+    try {
+      response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension + goldPriceContext }] },
+          contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 3072, responseMimeType: "application/json" }
+        })
+      });
+    } catch (networkError) {
+      console.error("[MargeShark PWA] Échec réseau lors de l'appel Gemini :", networkError);
+      throw new Error(
+        "Impossible de contacter l'IA Gemini - vérifie ta connexion internet, ou réessaie avec une capture d'écran plus légère."
+      );
+    }
 
     if (!response.ok) {
       const errBody = await response.json().catch(() => null);
