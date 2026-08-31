@@ -2112,6 +2112,18 @@
     loginOverlay.addEventListener("click", (e) => {
       if (e.target === loginOverlay) closeLoginModal();
     });
+
+    // Arrivée depuis l'extension (licence active, mais pas encore de session
+    // web) : ouvre directement la modale avec l'email déjà rempli, plutôt
+    // que de laisser le client sur une page d'accueil sans aucun contexte.
+    if (window.location.hash === "#connexion") {
+      const prefillEmail = new URLSearchParams(window.location.search).get("prefill_email");
+      openLoginModal();
+      if (prefillEmail) {
+        document.getElementById("loginEmailInput").value = prefillEmail;
+      }
+    }
+
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
       if (loginOverlay.classList.contains("open")) closeLoginModal();

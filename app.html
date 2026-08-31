@@ -760,8 +760,26 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Erreur lors de l'analyse.");
+
+    // Fourni par Lemon Squeezy via le backend - permet de relier une licence
+    // active à une session espace client web (voir mise à jour du bouton
+    // Connexion ci-dessous), sans jargon technique pour le client.
+    if (data.customerEmail) {
+      localStorage.setItem("margeshark_pwa_customer_email", data.customerEmail);
+      updateLoginBtnWithEmail();
+    }
+
     return data.analysis;
   }
+
+  function updateLoginBtnWithEmail() {
+    const storedEmail = localStorage.getItem("margeshark_pwa_customer_email");
+    const loginBtn = document.querySelector(".topbar-login-btn");
+    if (loginBtn && storedEmail) {
+      loginBtn.href = `espace-client.html?prefill_email=${encodeURIComponent(storedEmail)}`;
+    }
+  }
+  updateLoginBtnWithEmail(); // applique tout de suite si un email était déjà stocké d'une session précédente
 
   function buildSystemInstructionForVision() {
     return `Tu es un expert en achat/revente d'occasion (flipping) et un négociateur redoutable sur Leboncoin, toutes catégories confondues.

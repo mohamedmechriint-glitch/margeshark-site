@@ -1095,7 +1095,12 @@
         // depuis la page de connexion pouvait restaurer cette page espace
         // client (via le cache précédent/suivant du navigateur) dans son
         // état d'avant-redirection, vide et trompeur.
-        window.location.replace("https://margeshark.fr/#connexion");
+        // Si un email a été transmis depuis l'extension (client avec licence
+        // active mais pas encore de session web), on le fait suivre pour lui
+        // éviter un écran de connexion vide sans contexte.
+        const incomingEmail = new URLSearchParams(window.location.search).get("prefill_email");
+        const emailParam = incomingEmail ? `?prefill_email=${encodeURIComponent(incomingEmail)}` : "";
+        window.location.replace(`https://margeshark.fr/${emailParam}#connexion`);
         return false;
       }
 
@@ -1160,7 +1165,7 @@
       console.warn("[MargeShark] Erreur lors de la déconnexion :", error);
     }
     localStorage.removeItem("margeshark_session_token");
-    window.location.href = "https://margeshark.fr/";
+    window.location.replace("https://margeshark.fr/");
   }
 
   /* ===================== MOCK DATA (persisted in localStorage) ===================== */
@@ -1499,7 +1504,7 @@
       localStorage.removeItem("margeshark_session_token");
       showToast("✅ Compte supprimé.");
       setTimeout(() => {
-        window.location.href = "https://margeshark.fr";
+        window.location.replace("https://margeshark.fr");
       }, 1500);
     } catch (error) {
       showToast("❌ Erreur réseau - le compte n'a pas été supprimé.");
@@ -1756,8 +1761,8 @@
             <div class="plan-current-meta">19,99€/mois · Renouvellement automatique · Sans engagement</div>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="https://dealshark.lemonsqueezy.com/billing" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Mettre en pause</a>
-            <a href="https://dealshark.lemonsqueezy.com/billing" target="_blank" rel="noopener" class="btn btn-danger btn-sm">Résilier l'abonnement</a>
+            <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Mettre en pause</a>
+            <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" class="btn btn-danger btn-sm">Résilier l'abonnement</a>
           </div>
         </div>
         <div class="form-hint" style="margin-top:10px;">Ces actions t'amènent sur ton espace de gestion Lemon Squeezy (notre partenaire de paiement), où tu gères réellement ton abonnement en toute sécurité - connexion par lien magique envoyé à ton email si nécessaire. La date de renouvellement exacte et ton moyen de paiement sont visibles sur cet espace Lemon Squeezy.</div>
