@@ -331,6 +331,7 @@
       <input type="text" class="field-input" id="licenseKeyInput" placeholder="Reçue par email après ton achat" autocomplete="off" spellcheck="false" />
       <button class="save-key-btn" id="saveLicenseKeyBtn">Enregistrer la clé</button>
       <p class="field-hint" style="margin-top:8px;">La même clé que celle utilisée dans l'extension Chrome (Requin Tigre ou Grand Blanc).</p>
+      <div id="licenseStatusBox" style="display:none; margin-top:12px; padding:12px 14px; border-radius:10px;"></div>
     </div>
 
     <div class="card">
@@ -506,11 +507,67 @@
     flashSaved("saveGeminiKeyBtn");
     updateAnalyzeButtonState();
   });
-  document.getElementById("saveLicenseKeyBtn").addEventListener("click", () => {
+  document.getElementById("saveLicenseKeyBtn").addEventListener("click", async () => {
     localStorage.setItem("margeshark_pwa_license_key", licenseKeyInput.value.trim());
     flashSaved("saveLicenseKeyBtn");
     updateAnalyzeButtonState();
+    await checkAndDisplayLicenseStatus();
   });
+
+  // Vérifie réellement la clé auprès du serveur (elle n'était jusqu'ici que
+  // sauvegardée localement, sans jamais être validée ni afficher le
+  // moindre statut) - affiche clairement si la licence est active, avec le
+  // vrai solde restant, ou un message d'erreur clair si la clé est invalide.
+  async function checkAndDisplayLicenseStatus() {
+    const statusBox = document.getElementById("licenseStatusBox");
+    const key = localStorage.getItem("margeshark_pwa_license_key");
+
+    if (!key) {
+      statusBox.style.display = "none";
+      return;
+    }
+
+    statusBox.style.display = "block";
+    statusBox.style.background = "rgba(255,255,255,0.05)";
+    statusBox.style.border = "1px solid #334155";
+    statusBox.style.color = "#94a3b8";
+    statusBox.textContent = "Vérification de la licence...";
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/license-balance?licenseKey=${encodeURIComponent(key)}`);
+      const data = await response.json();
+
+      if (!response.ok || !data.valid) {
+        statusBox.style.background = "rgba(248, 113, 113, 0.1)";
+        statusBox.style.border = "1px solid rgba(248, 113, 113, 0.3)";
+        statusBox.style.color = "#f87171";
+        statusBox.textContent = "❌ Clé invalide, expirée ou résiliée.";
+        return;
+      }
+
+      statusBox.style.background = "rgba(74, 222, 128, 0.1)";
+      statusBox.style.border = "1px solid rgba(74, 222, 128, 0.3)";
+      statusBox.style.color = "#4ade80";
+
+      if (data.plan === "requin_tigre") {
+        statusBox.innerHTML = `✅ <strong>Mode payant actif</strong> (Requin Tigre)<br>${data.creditsRemaining} analyses restantes sur ton pack.`;
+      } else if (data.plan === "grand_blanc") {
+        statusBox.innerHTML = `✅ <strong>Mode payant actif</strong> (Grand Blanc)<br>${data.analysesUsedThisMonth} / 2000 analyses utilisées ce mois-ci.`;
+      } else {
+        statusBox.innerHTML = `✅ <strong>Mode payant actif</strong>`;
+      }
+    } catch (error) {
+      statusBox.style.background = "rgba(251, 191, 36, 0.1)";
+      statusBox.style.border = "1px solid rgba(251, 191, 36, 0.3)";
+      statusBox.style.color = "#fbbf24";
+      statusBox.textContent = "⚠️ Impossible de vérifier la licence pour le moment (problème réseau).";
+    }
+  }
+
+  // Vérifie tout de suite si une clé est déjà enregistrée (visite
+  // précédente) - pour que le statut soit visible immédiatement, pas
+  // seulement juste après avoir cliqué sur "Enregistrer".
+  checkAndDisplayLicenseStatus();
 
   function flashSaved(btnId) {
     const btn = document.getElementById(btnId);
