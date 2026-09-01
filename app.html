@@ -508,7 +508,12 @@
     updateAnalyzeButtonState();
   });
   document.getElementById("saveLicenseKeyBtn").addEventListener("click", async () => {
-    localStorage.setItem("margeshark_pwa_license_key", licenseKeyInput.value.trim());
+    // Normalisée (espaces + majuscules) dès la lecture - même raison que
+    // pour l'extension et le serveur (voir middleware-license.js) : sans
+    // ça, la même clé tapée/collée avec une casse différente entre
+    // l'extension et la PWA était traitée comme deux clés distinctes, avec
+    // chacune son propre pool de 500 crédits séparé.
+    localStorage.setItem("margeshark_pwa_license_key", licenseKeyInput.value.trim().toUpperCase());
     flashSaved("saveLicenseKeyBtn");
     updateAnalyzeButtonState();
     await checkAndDisplayLicenseStatus();
