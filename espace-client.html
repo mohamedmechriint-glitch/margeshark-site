@@ -467,6 +467,28 @@
     padding: 10px 12px;
     border-bottom: 1px solid var(--line);
   }
+  .info-tooltip {
+    display: inline-block;
+    cursor: help;
+    color: var(--text-dim);
+    margin-left: 3px;
+    font-size: 11px;
+    text-transform: none;
+  }
+  .row-delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 15px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .row-delete-btn:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+  }
   .data-table td {
     padding: 12px;
     font-size: 12.5px;
@@ -564,7 +586,7 @@
 
   /* ===================== BILLING ===================== */
   .plan-current-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
-  .plan-current-name { font-size: 20px; font-weight: 700; }
+  .plan-current-name { font-size: 20px; font-weight: 700; color: #4ade80; }
   .plan-current-meta { font-size: 12px; color: var(--text-mid); margin-top: 4px; }
 
   .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
@@ -767,7 +789,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="plan-badge">🦈 <span class="plan-text">Grand Blanc - Actif</span></div>
+      <div class="plan-badge" id="sidebarPlanBadge" style="display:none;">🦈 <span class="plan-text" id="sidebarPlanText">-</span></div>
       <button class="logout-btn" id="logoutBtn"><span>↩</span><span class="logout-label">Déconnexion</span></button>
     </div>
   </aside>
@@ -863,26 +885,32 @@
             <div class="form-group" style="margin-bottom:0;">
               <label class="form-label">Marge minimale</label>
               <select class="form-select" id="filterMargin">
-                <option value="0">Toutes</option>
+                <option value="none">Toutes</option>
                 <option value="20">≥ 20%</option>
                 <option value="40">≥ 40%</option>
                 <option value="60">≥ 60%</option>
               </select>
             </div>
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label">Catégorie</label>
-              <select class="form-select" id="filterCategory">
-                <option value="all">Toutes catégories</option>
-                <option value="Vélos">Vélos</option>
-                <option value="Téléphones">Téléphones</option>
-                <option value="Meubles">Meubles</option>
-                <option value="Consoles">Consoles</option>
-              </select>
-            </div>
+          </div>
+          <div id="bulkActionsBar" style="display:none; align-items:center; justify-content:space-between; padding:8px 12px; margin-bottom:10px; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.25); border-radius:8px; font-size:12.5px;">
+            <span><strong id="bulkSelectedCount">0</strong> article(s) sélectionné(s)</span>
+            <button class="btn btn-danger-solid" id="bulkDeleteBtn" style="padding:6px 14px; font-size:12px;">🗑️ Supprimer la sélection</button>
           </div>
           <table class="data-table" id="opportunitiesTable">
             <thead>
-              <tr><th>Article</th><th>Catégorie</th><th>Prix d'achat</th><th>Prix cible</th><th>Marge</th><th>Ajouté le</th><th>Lien</th></tr>
+              <tr>
+                <th style="width:32px;"><input type="checkbox" id="selectAllDeals" /></th>
+                <th>Article</th>
+                <th>Prix d'achat</th>
+                <th>
+                  Prix cible
+                  <span class="info-tooltip" title="Estimation du prix de revente sur le marché actuel, basée sur l'analyse IA de l'annonce.">ⓘ</span>
+                </th>
+                <th>Marge</th>
+                <th>Ajouté le</th>
+                <th>Lien</th>
+                <th style="width:40px;"></th>
+              </tr>
             </thead>
             <tbody id="opportunitiesBody"></tbody>
           </table>
@@ -935,7 +963,7 @@
                 <li><span class="ck">✓</span> Paiement unique, pas d'abonnement</li>
                 <li><span class="ck">✓</span> Rechargeable à tout moment</li>
               </ul>
-              <a href="https://dealshark.lemonsqueezy.com/checkout/buy/f1833edd-a7c5-491c-80d3-0efd67a1fdb0" target="_blank" rel="noopener" class="btn btn-outline btn-full btn-sm">Acheter un pack</a>
+              <button class="btn btn-outline btn-full btn-sm" id="tigerTierBtnEc" data-checkout-url="https://dealshark.lemonsqueezy.com/checkout/buy/f1833edd-a7c5-491c-80d3-0efd67a1fdb0" data-product-name="🐅 Requin Tigre" data-product-price="14,99€ (paiement unique)">Acheter un pack</button>
             </div>
             <div class="plan-tier" id="grandBlancTierCard">
               <div class="plan-tier-name">🦈 Grand Blanc</div>
@@ -945,7 +973,7 @@
                 <li><span class="ck">✓</span> Renouvellement automatique</li>
                 <li><span class="ck">✓</span> Sans engagement</li>
               </ul>
-              <a href="https://dealshark.lemonsqueezy.com/checkout/buy/a0a170aa-9ceb-4d2e-adf6-aac34087e750" target="_blank" rel="noopener" class="btn btn-teal btn-full btn-sm" id="grandBlancTierBtn">S'abonner</a>
+              <button class="btn btn-teal btn-full btn-sm" id="grandBlancTierBtn" data-checkout-url="https://dealshark.lemonsqueezy.com/checkout/buy/a0a170aa-9ceb-4d2e-adf6-aac34087e750" data-product-name="🦈 Grand Blanc" data-product-price="19,99€/mois (sans engagement)">S'abonner</button>
             </div>
           </div>
         </div>
@@ -984,13 +1012,6 @@
             <div>
               <div class="checkbox-label">Emails marketing</div>
               <div class="checkbox-desc">Recevoir des offres, actualités et conseils MargeShark par email.</div>
-            </div>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="consentAlerts" checked />
-            <div>
-              <div class="checkbox-label">Notifications d'alertes</div>
-              <div class="checkbox-desc">Recevoir les alertes de bonnes affaires par email/SMS selon la configuration choisie.</div>
             </div>
           </div>
           <div class="checkbox-row">
@@ -1054,6 +1075,42 @@
       <button class="btn btn-outline" data-close-modal="deleteModal">Annuler</button>
       <button class="btn btn-danger-solid" id="confirmDeleteBtn" disabled>Supprimer mon compte</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay-app" id="unlinkLicenseModal">
+  <div class="modal-box">
+    <button class="modal-close-app" data-close-modal="unlinkLicenseModal">✕</button>
+    <h3>Retirer cette licence ?</h3>
+    <p class="modal-sub">Licence concernée : <strong id="unlinkLicenseProductName"></strong></p>
+    <div class="danger-warning-box" style="background:rgba(251,191,36,0.08); border-color:rgba(251,191,36,0.3); color:#fbbf24;">
+      Cette licence ne sera plus reliée à ton compte web - tu ne verras plus son solde ni ses annonces sauvegardées ici. Ta clé reste valide et utilisable dans l'extension ou l'app. Pour la relier à nouveau plus tard, il te suffira de recoller la clé reçue par email lors de ton achat.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" data-close-modal="unlinkLicenseModal">Annuler</button>
+      <button class="btn btn-danger-solid" id="confirmUnlinkBtn">Retirer la licence</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay-app" id="withdrawalModalOverlayEc">
+  <div class="modal-box">
+    <button class="modal-close-app" data-close-modal="withdrawalModalOverlayEc">✕</button>
+    <h3>Dernière étape</h3>
+    <p class="modal-sub" id="withdrawalModalProductEc">🐅 Requin Tigre - 14,99€</p>
+
+    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; background:rgba(255,255,255,0.03); border:1.5px solid #334155; border-radius:10px; padding:14px; margin-bottom:16px;">
+      <input type="checkbox" id="withdrawalConsentCheckboxEc" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
+      <span style="font-size:12.5px; line-height:1.55; color:#cbd5e1;">
+        Je demande l'accès immédiat au service et <strong style="color:#eaf3f7;">j'accepte de renoncer expressément à mon délai de rétractation de 14 jours</strong>, conformément à l'article L.221-28 13° du Code de la consommation applicable aux contenus numériques livrés sans support matériel.
+      </span>
+    </label>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" data-close-modal="withdrawalModalOverlayEc">Annuler</button>
+      <button class="btn btn-teal" id="withdrawalContinueBtnEc" disabled style="opacity:0.4; cursor:not-allowed;">Continuer vers le paiement →</button>
+    </div>
+    <p class="form-hint" style="margin-top:10px;">Tu seras redirigé vers Lemon Squeezy, notre prestataire de paiement (Merchant of Record). Consulte nos <a href="cgv.html" target="_blank" style="color:#2dd4bf;">CGV</a> pour le détail des conditions.</p>
   </div>
 </div>
 
@@ -1177,7 +1234,7 @@
       if (raw) return JSON.parse(raw);
     } catch (e) {}
     return {
-      consents: { marketing: false, alerts: true, cookies: true }
+      consents: { marketing: false, cookies: true }
     };
   }
 
@@ -1319,18 +1376,22 @@
             <div class="feed-title">${escapeHtml(item.title || "Article")}</div>
             <div class="feed-meta">${escapeHtml(item.category || "")} · ${item.price || 0} €</div>
           </div>
-          <div class="feed-margin">${marginPercent >= 0 ? "+" : ""}${marginPercent}%</div>
+          <div style="text-align:right;">
+            <div style="font-size:9.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:2px;">Perte/gain estimé</div>
+            <div class="feed-margin">${marginPercent >= 0 ? "+" : ""}${marginPercent}%</div>
+          </div>
         </div>
       `;
     }).join("");
   }
 
   function renderSavedItemsTable() {
-    const marginFilter = parseInt(document.getElementById("filterMargin").value, 10);
-    const categoryFilter = document.getElementById("filterCategory").value;
+    const marginFilterRaw = document.getElementById("filterMargin").value;
+    const marginFilter = marginFilterRaw === "none" ? null : parseInt(marginFilterRaw, 10);
 
-    let items = realSavedItems.filter((item) => computeMarginFromDeal(item).marginPercent >= marginFilter);
-    if (categoryFilter !== "all") items = items.filter((item) => item.category === categoryFilter);
+    let items = marginFilter === null
+      ? realSavedItems.slice()
+      : realSavedItems.filter((item) => computeMarginFromDeal(item).marginPercent >= marginFilter);
 
     const body = document.getElementById("opportunitiesBody");
     const emptyState = document.getElementById("savedItemsEmpty");
@@ -1344,7 +1405,7 @@
     if (emptyState) emptyState.style.display = "none";
 
     if (items.length === 0) {
-      body.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-dim);">Aucun article ne correspond à ces filtres.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-dim);">Aucun article ne correspond à ces filtres.</td></tr>`;
       return;
     }
 
@@ -1353,16 +1414,88 @@
       const dateStr = item.saved_at ? new Date(item.saved_at).toLocaleDateString("fr-FR") : "-";
       return `
         <tr>
+          <td><input type="checkbox" class="deal-row-checkbox" data-id="${item.id}" /></td>
           <td>${escapeHtml(item.title || "Article")}</td>
-          <td>${escapeHtml(item.category || "-")}</td>
           <td class="mono">${item.price || 0} €</td>
           <td class="mono">${Math.round(targetPrice)} €</td>
           <td class="mono" style="color:${marginEuro >= 0 ? "#4ade80" : "#f87171"};">${marginEuro >= 0 ? "+" : ""}${marginEuro} € (${marginPercent >= 0 ? "+" : ""}${marginPercent}%)</td>
           <td>${dateStr}</td>
           <td><a href="${item.url || "#"}" target="_blank" rel="noopener" class="table-btn">Voir</a></td>
+          <td><button class="row-delete-btn" data-id="${item.id}" title="Supprimer cet article">🗑️</button></td>
         </tr>
       `;
     }).join("");
+
+    body.querySelectorAll(".row-delete-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Supprimer définitivement cet article sauvegardé ?")) return;
+        try {
+          const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/deals/${encodeURIComponent(btn.dataset.id)}`, {
+            method: "DELETE",
+            headers: authHeaders()
+          });
+          if (!response.ok) {
+            showToast("❌ Impossible de supprimer cet article.");
+            return;
+          }
+          showToast("✅ Article supprimé.");
+          loadRealSavedItems();
+        } catch (error) {
+          showToast("❌ Erreur réseau - article non supprimé.");
+        }
+      });
+    });
+
+    // Sélection multiple - met à jour la barre d'action groupée à chaque
+    // changement de case, et gère la case "tout sélectionner" en tête.
+    const updateBulkBar = () => {
+      const checked = body.querySelectorAll(".deal-row-checkbox:checked");
+      const bar = document.getElementById("bulkActionsBar");
+      document.getElementById("bulkSelectedCount").textContent = checked.length;
+      bar.style.display = checked.length > 0 ? "flex" : "none";
+    };
+
+    body.querySelectorAll(".deal-row-checkbox").forEach((cb) => {
+      cb.addEventListener("change", updateBulkBar);
+    });
+
+    const selectAllEl = document.getElementById("selectAllDeals");
+    if (selectAllEl) {
+      selectAllEl.checked = false;
+      selectAllEl.onchange = () => {
+        body.querySelectorAll(".deal-row-checkbox").forEach((cb) => { cb.checked = selectAllEl.checked; });
+        updateBulkBar();
+      };
+    }
+
+    const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
+    if (bulkDeleteBtn) {
+      bulkDeleteBtn.onclick = async () => {
+        const ids = Array.from(body.querySelectorAll(".deal-row-checkbox:checked")).map((cb) => cb.dataset.id);
+        if (ids.length === 0) return;
+        if (!confirm(`Supprimer définitivement ces ${ids.length} article(s) sauvegardé(s) ?`)) return;
+
+        bulkDeleteBtn.disabled = true;
+        bulkDeleteBtn.textContent = "Suppression...";
+
+        try {
+          await Promise.all(ids.map((id) =>
+            fetch(`${MARGESHARK_BACKEND_URL}/api/account/deals/${encodeURIComponent(id)}`, {
+              method: "DELETE",
+              headers: authHeaders()
+            })
+          ));
+          showToast(`✅ ${ids.length} article(s) supprimé(s).`);
+          loadRealSavedItems();
+        } catch (error) {
+          showToast("❌ Erreur réseau - suppression partielle possible.");
+          loadRealSavedItems();
+        }
+
+        bulkDeleteBtn.disabled = false;
+        bulkDeleteBtn.textContent = "🗑️ Supprimer la sélection";
+      };
+    }
   }
 
   function renderRealKpis() {
@@ -1407,9 +1540,7 @@
   }
 
   const filterMarginEl = document.getElementById("filterMargin");
-  const filterCategoryEl = document.getElementById("filterCategory");
   if (filterMarginEl) filterMarginEl.addEventListener("change", renderSavedItemsTable);
-  if (filterCategoryEl) filterCategoryEl.addEventListener("change", renderSavedItemsTable);
 
   loadRealSavedItems();
 
@@ -1421,13 +1552,11 @@
 
   /* ===================== GDPR ===================== */
   document.getElementById("consentMarketing").checked = store.consents.marketing;
-  document.getElementById("consentAlerts").checked = store.consents.alerts;
   document.getElementById("consentCookies").checked = store.consents.cookies;
 
   document.getElementById("saveConsentsBtn").addEventListener("click", () => {
     store.consents = {
       marketing: document.getElementById("consentMarketing").checked,
-      alerts: document.getElementById("consentAlerts").checked,
       cookies: document.getElementById("consentCookies").checked
     };
     saveStore(store);
@@ -1456,6 +1585,74 @@
     };
     downloadFile("margeshark-mes-donnees.json", JSON.stringify(exportPayload, null, 2), "application/json");
     showToast("✅ Export de tes données téléchargé.");
+  });
+
+  /* ===================== MODALE DE RÉTRACTATION (achat depuis l'espace client) ===================== */
+  const withdrawalOverlayEc = document.getElementById("withdrawalModalOverlayEc");
+  const withdrawalCheckboxEc = document.getElementById("withdrawalConsentCheckboxEc");
+  const withdrawalContinueBtnEc = document.getElementById("withdrawalContinueBtnEc");
+  const withdrawalProductElEc = document.getElementById("withdrawalModalProductEc");
+  let pendingCheckoutUrlEc = null;
+
+  function openWithdrawalModalEc(checkoutUrl, productName, productPrice) {
+    pendingCheckoutUrlEc = checkoutUrl;
+    withdrawalProductElEc.textContent = `${productName} - ${productPrice}`;
+    withdrawalCheckboxEc.checked = false;
+    withdrawalContinueBtnEc.disabled = true;
+    withdrawalContinueBtnEc.style.opacity = "0.4";
+    withdrawalContinueBtnEc.style.cursor = "not-allowed";
+    withdrawalOverlayEc.classList.add("open");
+  }
+
+  ["tigerTierBtnEc", "grandBlancTierBtn"].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener("click", function () {
+        openWithdrawalModalEc(this.getAttribute("data-checkout-url"), this.getAttribute("data-product-name"), this.getAttribute("data-product-price"));
+      });
+    }
+  });
+
+  withdrawalCheckboxEc.addEventListener("change", () => {
+    withdrawalContinueBtnEc.disabled = !withdrawalCheckboxEc.checked;
+    withdrawalContinueBtnEc.style.opacity = withdrawalCheckboxEc.checked ? "1" : "0.4";
+    withdrawalContinueBtnEc.style.cursor = withdrawalCheckboxEc.checked ? "pointer" : "not-allowed";
+  });
+
+  withdrawalContinueBtnEc.addEventListener("click", () => {
+    if (!withdrawalCheckboxEc.checked || !pendingCheckoutUrlEc) return;
+    window.open(pendingCheckoutUrlEc, "_blank", "noopener");
+    withdrawalOverlayEc.classList.remove("open");
+    pendingCheckoutUrlEc = null;
+  });
+
+  /* ===================== RETRAIT DE LICENCE (avec confirmation) ===================== */
+  let pendingUnlinkKey = null;
+  document.getElementById("confirmUnlinkBtn").addEventListener("click", async () => {
+    if (!pendingUnlinkKey) return;
+    const btn = document.getElementById("confirmUnlinkBtn");
+    btn.disabled = true;
+    btn.textContent = "Retrait en cours...";
+
+    try {
+      await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses/${encodeURIComponent(pendingUnlinkKey)}`, {
+        method: "DELETE",
+        headers: authHeaders()
+      });
+      document.getElementById("unlinkLicenseModal").classList.remove("open");
+      showToast("✅ Licence retirée de ton compte.");
+      loadLinkedLicenses();
+      renderPlanSummary();
+      loadRealSavedItems();
+      renderOnboardingCard();
+      loadAutoBalance();
+    } catch (error) {
+      showToast("❌ Erreur réseau - la licence n'a pas été retirée.");
+    }
+
+    pendingUnlinkKey = null;
+    btn.disabled = false;
+    btn.textContent = "Retirer la licence";
   });
 
   /* ===================== DELETE ACCOUNT MODAL ===================== */
@@ -1739,6 +1936,29 @@
     const grandBlanc = licenses.find((l) => /grand blanc/i.test(l.product_name || ""));
     const requinTigre = licenses.find((l) => /requin tigre/i.test(l.product_name || ""));
 
+    // Badge dans le bas de la barre latérale - était codé en dur sur "Grand
+    // Blanc - Actif" quel que soit le plan réel du client, corrigé pour
+    // refléter la vraie licence liée (et les DEUX si le client a les deux
+    // à la fois, ce qui est un cas valide - rien n'empêche techniquement un
+    // client d'avoir un pack Requin Tigre ET un abonnement Grand Blanc en
+    // parallèle).
+    const sidebarBadge = document.getElementById("sidebarPlanBadge");
+    const sidebarText = document.getElementById("sidebarPlanText");
+    if (sidebarBadge && sidebarText) {
+      if (grandBlanc && requinTigre) {
+        sidebarBadge.style.display = "flex";
+        sidebarText.textContent = "Grand Blanc + Requin Tigre";
+      } else if (grandBlanc) {
+        sidebarBadge.style.display = "flex";
+        sidebarText.textContent = "Grand Blanc - Actif";
+      } else if (requinTigre) {
+        sidebarBadge.style.display = "flex";
+        sidebarText.textContent = "Requin Tigre - Actif";
+      } else {
+        sidebarBadge.style.display = "none";
+      }
+    }
+
     if (!grandBlanc && !requinTigre) {
       // Aucune licence liée : pas de bloc "plan actuel" trompeur, juste rien -
       // la section "Mes licences" au-dessus invite déjà à en relier une.
@@ -1802,24 +2022,29 @@
         return;
       }
 
-      listEl.innerHTML = data.licenses.map((l) => `
+      listEl.innerHTML = data.licenses.map((l) => {
+        const isGrandBlanc = /grand blanc/i.test(l.product_name || "");
+        const actionBtn = isGrandBlanc
+          ? `<a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" class="table-btn" style="font-size:11px;">Gérer mon abonnement</a>`
+          : `<button class="table-btn unlink-license-btn" data-key="${l.license_key}" style="font-size:11px;">Retirer</button>`;
+        return `
         <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; font-size:12.5px;">
           <span>${l.product_name || "Licence"} — <span class="muted">${l.license_key.slice(0, 8)}...</span></span>
-          <button class="table-btn unlink-license-btn" data-key="${l.license_key}" style="font-size:11px;">Retirer</button>
+          ${actionBtn}
         </div>
-      `).join("");
+      `;
+      }).join("");
 
       listEl.querySelectorAll(".unlink-license-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          await fetch(`${MARGESHARK_BACKEND_URL}/api/account/licenses/${encodeURIComponent(btn.dataset.key)}`, {
-            method: "DELETE",
-            headers: authHeaders()
-          });
-          loadLinkedLicenses();
-          renderPlanSummary();
-          loadRealSavedItems();
-          renderOnboardingCard();
-          loadAutoBalance();
+        btn.addEventListener("click", () => {
+          // Confirmation avant de retirer - la clé n'est pas supprimée chez
+          // Lemon Squeezy (juste détachée de ce compte web), mais le client
+          // doit quand même confirmer avant de perdre l'accès facile à son
+          // solde/historique depuis l'espace client.
+          pendingUnlinkKey = btn.dataset.key;
+          const productLabel = btn.closest("div").querySelector("span").textContent.split("—")[0].trim();
+          document.getElementById("unlinkLicenseProductName").textContent = productLabel;
+          document.getElementById("unlinkLicenseModal").classList.add("open");
         });
       });
     } catch (error) {

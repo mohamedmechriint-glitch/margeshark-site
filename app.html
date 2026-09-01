@@ -34,7 +34,8 @@
     padding-bottom: 40px;
   }
   .topbar {
-    display: flex; align-items: center; gap: 10px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 10px;
+    padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
     border-bottom: 1px solid var(--line); position: sticky; top: 0;
     background: rgba(5, 13, 26, 0.92); backdrop-filter: blur(10px); z-index: 10;
   }
@@ -481,6 +482,43 @@
   let lastAnalysis = null;
   let currentNegoApproach = "doux";
 
+  // Quota quotidien gratuit - jusqu'ici totalement absent côté PWA (seul
+  // l'extension l'appliquait), ce qui permettait de dépasser librement les
+  // 5 analyses/jour annoncées en passant par l'app. Même limite, même
+  // logique que l'extension (voir content.js), adaptée à localStorage.
+  const DAILY_FREE_LIMIT_PWA = 5;
+
+  function getTodayDateKeyPwa() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  }
+
+  function getDailyUsagePwa() {
+    try {
+      return JSON.parse(localStorage.getItem("margeshark_pwa_daily_usage") || "null") || { date: null, count: 0 };
+    } catch (e) {
+      return { date: null, count: 0 };
+    }
+  }
+
+  function setDailyUsagePwa(usage) {
+    localStorage.setItem("margeshark_pwa_daily_usage", JSON.stringify(usage));
+  }
+
+  function checkAndConsumeDailyQuotaPwa() {
+    const today = getTodayDateKeyPwa();
+    let usage = getDailyUsagePwa();
+    if (usage.date !== today) usage = { date: today, count: 0 };
+
+    if (usage.count >= DAILY_FREE_LIMIT_PWA) {
+      return { allowed: false, count: usage.count };
+    }
+
+    usage.count += 1;
+    setDailyUsagePwa(usage);
+    return { allowed: true, count: usage.count };
+  }
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch((e) => console.warn("[MargeShark PWA] Service worker non enregistré:", e));
   }
@@ -658,6 +696,14 @@
     try {
       let analysis;
       if (currentMode === "free") {
+        // Vérifie ET consomme le quota quotidien AVANT l'appel Gemini - pas
+        // après, pour ne jamais faire une analyse "gratuite" en trop.
+        const quota = checkAndConsumeDailyQuotaPwa();
+        if (!quota.allowed) {
+          stopLoadingProgress();
+          showError(`Tu as déjà utilisé tes ${DAILY_FREE_LIMIT_PWA} analyses gratuites aujourd'hui. Reviens demain, ou passe sur une offre payante pour continuer maintenant.`);
+          return;
+        }
         const geminiKey = localStorage.getItem("margeshark_pwa_gemini_key");
         analysis = await callGeminiDirect(geminiKey, selectedImages);
       } else {
@@ -758,6 +804,25 @@ COURS DE L'OR DU JOUR (donnée vérifiée en temps réel, à utiliser en priorit
     }
   }
 
+  // Même logique que le backend (gemini-caller.js) : Gemini renvoie parfois
+  // une erreur 503 (surcharge momentanée) ou 429 (quota) qui se résout
+  // généralement en quelques secondes - on retente automatiquement avant
+  // d'abandonner, pour éviter de faire échouer l'analyse pour un simple pic
+  // temporaire chez Google.
+  async function fetchGeminiWithRetryPwa(url, options, maxRetries = 2) {
+    let lastResponse;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      lastResponse = await fetch(url, options);
+      if (lastResponse.ok) return lastResponse;
+      if ((lastResponse.status !== 503 && lastResponse.status !== 429) || attempt === maxRetries) return lastResponse;
+
+      const waitMs = lastResponse.status === 429 ? 3000 * (attempt + 1) : 1000 * (attempt + 1);
+      console.log(`[MargeShark PWA] Gemini indisponible (${lastResponse.status}) - nouvelle tentative dans ${waitMs}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    return lastResponse;
+  }
+
   async function callGeminiDirect(apiKey, images) {
     if (!apiKey) throw new Error("Configure d'abord ta clé API Gemini ci-dessus.");
 
@@ -785,7 +850,7 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
 
     let response;
     try {
-      response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
+      response = await fetchGeminiWithRetryPwa(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -807,7 +872,8 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
       if (response.status === 400 && /API key/i.test(detail)) throw new Error("Clé API invalide. Vérifie ta clé Gemini ci-dessus.");
       if (response.status === 403) throw new Error("Clé refusée par Google. Vérifie-la sur aistudio.google.com.");
       if (response.status === 429) throw new Error("Quota Gemini gratuit atteint pour aujourd'hui. Réessaie plus tard, ou passe sur une offre payante.");
-      throw new Error(detail || `Erreur API (code ${response.status}).`);
+      if (response.status === 503) throw new Error("L'IA Gemini est momentanément surchargée. Réessaie dans quelques instants pour relancer l'analyse.");
+      throw new Error(detail ? `Erreur de l'IA : réessaie dans quelques instants.` : `Erreur API (code ${response.status}). Réessaie dans quelques instants.`);
     }
 
     const data = await response.json();
