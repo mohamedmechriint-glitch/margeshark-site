@@ -850,38 +850,58 @@ Si images_coherentes est false, NE GÉNÈRE AUCUNE ESTIMATION : mets score, prix
       ? `Voici ${images.length} captures d'écran censées provenir de la MÊME annonce Leboncoin. Vérifie D'ABORD leur cohérence (voir consigne ci-dessus), puis si elles sont cohérentes, combine leurs informations, lis le titre, le prix, la description et tout critère technique visible, et analyse selon les règles ci-dessus.`
       : "Voici une capture d'écran d'une annonce Leboncoin. Lis le titre, le prix et la description visibles, puis analyse selon les règles ci-dessus.";
 
-    let response;
-    try {
-      response = await fetchGeminiWithRetryPwa(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension + goldPriceContext }] },
-          contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 3072, responseMimeType: "application/json" }
-        })
-      });
-    } catch (networkError) {
-      console.error("[MargeShark PWA] Échec réseau lors de l'appel Gemini :", networkError);
-      throw new Error(
-        "Impossible de contacter l'IA Gemini - vérifie ta connexion internet, ou réessaie avec une capture d'écran plus légère."
-      );
+    const requestBody = JSON.stringify({
+      systemInstruction: { parts: [{ text: buildSystemInstructionForVision() + schemaExtension + goldPriceContext }] },
+      contents: [{ role: "user", parts: [{ text: introText }, ...imageParts] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 6144, responseMimeType: "application/json" }
+    });
+
+    const MAX_JSON_RETRIES = 1;
+    let lastJsonError;
+
+    for (let jsonAttempt = 0; jsonAttempt <= MAX_JSON_RETRIES; jsonAttempt++) {
+      let response;
+      try {
+        response = await fetchGeminiWithRetryPwa(`${GEMINI_API_URL}?key=${encodeURIComponent(apiKey)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: requestBody
+        });
+      } catch (networkError) {
+        console.error("[MargeShark PWA] Échec réseau lors de l'appel Gemini :", networkError);
+        throw new Error(
+          "Impossible de contacter l'IA Gemini - vérifie ta connexion internet, ou réessaie avec une capture d'écran plus légère."
+        );
+      }
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => null);
+        const detail = errBody?.error?.message || "";
+        if (response.status === 400 && /API key/i.test(detail)) throw new Error("Clé API invalide. Vérifie ta clé Gemini ci-dessus.");
+        if (response.status === 403) throw new Error("Clé refusée par Google. Vérifie-la sur aistudio.google.com.");
+        if (response.status === 429) throw new Error("Quota Gemini gratuit atteint pour aujourd'hui. Réessaie plus tard, ou passe sur une offre payante.");
+        if (response.status === 503) throw new Error("L'IA Gemini est momentanément surchargée. Réessaie dans quelques instants pour relancer l'analyse.");
+        throw new Error(detail ? `Erreur de l'IA : réessaie dans quelques instants.` : `Erreur API (code ${response.status}). Réessaie dans quelques instants.`);
+      }
+
+      const data = await response.json();
+      const textBlock = data.candidates?.[0]?.content?.parts?.find((p) => typeof p.text === "string")?.text;
+      if (!textBlock) throw new Error("Réponse vide de l'IA. Réessaie.");
+
+      try {
+        return JSON.parse(textBlock);
+      } catch (parseError) {
+        // Réponse tronquée ou mal formée - un simple nouvel essai suffit
+        // très souvent, plutôt que d'échouer directement sans aucune
+        // tentative (voir même logique côté extension/backend).
+        lastJsonError = new Error("L'IA a renvoyé une réponse inattendue. Réessaie l'analyse dans quelques instants.");
+        if (jsonAttempt < MAX_JSON_RETRIES) {
+          console.log("[MargeShark PWA] Réponse Gemini mal formée, nouvelle tentative complète...", parseError.message);
+        }
+      }
     }
 
-    if (!response.ok) {
-      const errBody = await response.json().catch(() => null);
-      const detail = errBody?.error?.message || "";
-      if (response.status === 400 && /API key/i.test(detail)) throw new Error("Clé API invalide. Vérifie ta clé Gemini ci-dessus.");
-      if (response.status === 403) throw new Error("Clé refusée par Google. Vérifie-la sur aistudio.google.com.");
-      if (response.status === 429) throw new Error("Quota Gemini gratuit atteint pour aujourd'hui. Réessaie plus tard, ou passe sur une offre payante.");
-      if (response.status === 503) throw new Error("L'IA Gemini est momentanément surchargée. Réessaie dans quelques instants pour relancer l'analyse.");
-      throw new Error(detail ? `Erreur de l'IA : réessaie dans quelques instants.` : `Erreur API (code ${response.status}). Réessaie dans quelques instants.`);
-    }
-
-    const data = await response.json();
-    const textBlock = data.candidates?.[0]?.content?.parts?.find((p) => typeof p.text === "string")?.text;
-    if (!textBlock) throw new Error("Réponse vide de l'IA. Réessaie.");
-    return JSON.parse(textBlock);
+    throw lastJsonError;
   }
 
   async function callBackendAnalyze(licenseKey, images) {
