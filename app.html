@@ -447,6 +447,8 @@
         </div>
       </div>
 
+      <button class="new-scan-btn" id="saveDealBtn" style="display:none; background:rgba(45,212,191,0.1); border:1px solid rgba(45,212,191,0.3); color:#2dd4bf; margin-bottom:10px;">💾 Sauvegarder dans mon Dashboard</button>
+      <button class="new-scan-btn" id="shareAnalysisBtn" style="background:rgba(255,255,255,0.05); margin-bottom:10px;">🔗 Partager cette analyse</button>
       <button class="new-scan-btn" id="newScanBtn">🔄 Analyser une autre annonce</button>
     </div>
 
@@ -1079,6 +1081,15 @@ Ne renvoie jamais de champ "marge_estimee_revente" : cette valeur est calculée 
     hideAll();
     document.getElementById("resultSection").style.display = "block";
 
+    // "Sauvegarder" n'a de sens qu'en mode payant : la PWA n'a pas de
+    // stockage local de secours comme l'extension (chrome.storage) - sans
+    // licence, il n'y a nulle part où synchroniser l'annonce pour la
+    // retrouver plus tard depuis l'espace client.
+    const saveBtn = document.getElementById("saveDealBtn");
+    saveBtn.style.display = currentMode === "paid" ? "block" : "none";
+    saveBtn.disabled = false;
+    saveBtn.textContent = "💾 Sauvegarder dans mon Dashboard";
+
     const score = a.score || 0;
     const scoreClass = getScoreClass(score);
     document.getElementById("scoreDisplay").className = "dd-score-display " + scoreClass;
@@ -1192,6 +1203,108 @@ Ne renvoie jamais de champ "marge_estimee_revente" : cette valeur est calculée 
       setTimeout(() => { btn.textContent = original; }, 2000);
     });
   }
+
+  document.getElementById("saveDealBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("saveDealBtn");
+    const licenseKey = localStorage.getItem("margeshark_pwa_license_key");
+    if (!lastAnalysis || !licenseKey) return;
+
+    btn.disabled = true;
+    btn.textContent = "Sauvegarde en cours...";
+
+    const a = lastAnalysis;
+    const price = typeof a.prix_detecte === "number" ? a.prix_detecte : 0;
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/deals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          licenseKey,
+          deal: {
+            title: a.titre_detecte || "Annonce analysée",
+            price,
+            url: null,
+            score: a.score,
+            marginDisplay: a.estimation_marche || "",
+            category: null,
+            data: {
+              title: a.titre_detecte || "Annonce analysée",
+              price,
+              score: a.score,
+              verdict: a.verdict,
+              savedAt: new Date().toISOString(),
+              // Détail complet de l'analyse - même logique que l'extension,
+              // pour retrouver plus tard le vrai résultat (pas juste le
+              // score) depuis l'espace client.
+              fullAnalysis: {
+                niveau_confiance: a.niveau_confiance,
+                vendeur_presse: a.vendeur_presse,
+                profil_vendeur: a.profil_vendeur,
+                avis_general_produit: a.avis_general_produit,
+                points_forts: a.points_forts,
+                points_attention: a.points_attention,
+                red_flags: a.red_flags,
+                questions_au_vendeur: a.questions_au_vendeur,
+                points_a_verifier_sur_place: a.points_a_verifier_sur_place,
+                messages_negociation: a.messages_negociation
+              }
+            }
+          }
+        })
+      });
+
+      if (!response.ok) throw new Error("Échec de la sauvegarde.");
+      btn.textContent = "✓ Sauvegardé !";
+    } catch (error) {
+      btn.textContent = "❌ Erreur, réessaie";
+    }
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = "💾 Sauvegarder dans mon Dashboard";
+    }, 2200);
+  });
+
+  document.getElementById("shareAnalysisBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("shareAnalysisBtn");
+    if (!lastAnalysis) return;
+
+    btn.disabled = true;
+    btn.textContent = "Création du lien...";
+
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/share`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Pas de catégorie détectée par la PWA pour l'instant - le
+          // backend bascule proprement sur "Autre" (voir normalizeCategory
+          // dans route-share.js). Jamais le titre exact de l'annonce, par
+          // prudence vis-à-vis du droit des producteurs de bases de
+          // données (même logique que l'extension).
+          category: null,
+          url: null,
+          analysis: lastAnalysis
+        })
+      });
+
+      if (!response.ok) throw new Error("Échec de la création du lien.");
+
+      const data = await response.json();
+      const shareUrl = `https://margeshark.fr/partage.html?id=${data.id}`;
+
+      await navigator.clipboard.writeText(shareUrl);
+      btn.textContent = "✓ Lien copié !";
+    } catch (error) {
+      btn.textContent = "❌ Erreur, réessaie";
+    }
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = "🔗 Partager cette analyse";
+    }, 2200);
+  });
 
   document.getElementById("newScanBtn").addEventListener("click", () => {
     selectedImages = [];
