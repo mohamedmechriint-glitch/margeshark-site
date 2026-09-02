@@ -110,7 +110,7 @@
       "name": "Où puis-je télécharger l'extension ?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MargeShark est actuellement en cours de revue sur le Chrome Web Store, une étape obligatoire imposée par Google pour toute nouvelle extension. Elle sera disponible en téléchargement public dès cette revue terminée - inscris-toi via le bouton \"Installer l'extension\" pour être informé dès qu'elle est en ligne."
+        "text": "MargeShark est disponible directement sur le Chrome Web Store - installation gratuite en un clic."
       }
     },
     {
@@ -1553,7 +1553,7 @@
         <a href="#faq">FAQ</a>
       </div>
       <button class="nav-login-btn" id="navLoginBtn" type="button">Connexion</button>
-      <a class="nav-cta nav-cta-desktop-only" href="#tarifs"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
+      <a class="nav-cta nav-cta-desktop-only" href="https://chromewebstore.google.com/detail/hlokbmkenoeelaglebjfogpcefadelad" target="_blank" rel="noopener"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
       <a class="nav-cta nav-cta-mobile-only" href="app.html">📲 Installer l'app</a>
     </div>
   </nav>
@@ -1567,7 +1567,7 @@
       <!-- Étape 1 : saisie de l'email -->
       <div id="loginStepEmail">
         <div class="license-input-wrap" style="margin-bottom: 10px;">
-          <input type="email" id="loginEmailInput" placeholder="ton@email.com" autocomplete="email" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:13px; font-family:inherit; outline:none;" />
+          <input type="email" id="loginEmailInput" placeholder="ton@email.com" autocomplete="email" aria-label="Adresse email" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:13px; font-family:inherit; outline:none;" />
         </div>
         <button class="email-login-btn" id="emailLoginBtn" type="button">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v16H4z" stroke="none"/><path d="M4 6l8 6 8-6M4 6v12h16V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1581,13 +1581,15 @@
           Code envoyé à <strong id="loginCodeEmailDisplay" style="color:#eaf3f7;"></strong>
         </p>
         <div class="license-input-wrap" style="margin-bottom: 10px;">
-          <input type="text" id="loginCodeInput" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:22px; font-family:'Courier New', monospace; letter-spacing:8px; text-align:center; outline:none;" />
+          <input type="text" id="loginCodeInput" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" aria-label="Code de connexion à 6 chiffres" style="width:100%; padding:11px 12px; background:#0f172a; border:1.5px solid #334155; border-radius:9px; color:#f8fafc; font-size:22px; font-family:'Courier New', monospace; letter-spacing:8px; text-align:center; outline:none;" />
         </div>
         <button class="email-login-btn" id="verifyCodeBtn" type="button">Vérifier le code</button>
         <button type="button" id="backToEmailBtn" style="width:100%; margin-top:8px; background:none; border:none; color:#5e7488; font-size:12px; cursor:pointer; font-family:inherit; text-decoration:underline;">
           ← Changer d'adresse email
         </button>
       </div>
+
+      <p class="login-error-msg" id="loginErrorMsg" style="display:none; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); color:#fca5a5; font-size:12px; padding:9px 12px; border-radius:8px; margin:0 0 12px 0;"></p>
 
       <p class="login-modal-note">En te connectant, tu retrouves ton historique de facturation et peux gérer ton abonnement Lemon Squeezy. Aucune donnée n'est partagée avec des tiers.</p>
     </div>
@@ -1603,7 +1605,7 @@
       <p class="login-sub" id="withdrawalModalProduct">🐅 Requin Tigre - 14,99€</p>
 
       <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; background:rgba(255,255,255,0.03); border:1.5px solid #334155; border-radius:10px; padding:14px; margin-bottom:16px;">
-        <input type="checkbox" id="withdrawalConsentCheckbox" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
+        <input type="checkbox" id="withdrawalConsentCheckbox" aria-label="J'accepte de renoncer à mon délai de rétractation de 14 jours pour un accès immédiat" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
         <span style="font-size:12.5px; line-height:1.55; color:#cbd5e1;">
           Je demande l'accès immédiat au service et <strong style="color:#eaf3f7;">j'accepte de renoncer expressément à mon délai de rétractation de 14 jours</strong>, conformément à l'article L.221-28 13° du Code de la consommation applicable aux contenus numériques livrés sans support matériel.
         </span>
@@ -1860,7 +1862,7 @@
             <li><span class="check">✓</span> Scripts de négociation illimités</li>
             <li><span class="check">✓</span> Dashboard et export CSV</li>
           </ul>
-          <a class="price-cta free" href="#" id="freeInstallBtn">Installer gratuitement</a>
+          <a class="price-cta free" href="https://chromewebstore.google.com/detail/hlokbmkenoeelaglebjfogpcefadelad" target="_blank" rel="noopener" id="freeInstallBtn">Installer gratuitement</a>
         </div>
 
         <div class="price-card">
@@ -1914,7 +1916,7 @@
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-0b" id="faq-btn-0b"><span>Où puis-je télécharger l'extension ?</span><span class="chev" aria-hidden="true">⌄</span></button>
-          <div class="faq-a" id="faq-ans-0b" role="region" aria-labelledby="faq-btn-0b"><div class="faq-a-inner">MargeShark est actuellement en cours de revue sur le Chrome Web Store, une étape obligatoire imposée par Google pour toute nouvelle extension. Elle sera disponible en téléchargement public dès cette revue terminée - clique sur "Installer l'extension" pour être redirigé dès qu'elle est en ligne.</div></div>
+          <div class="faq-a" id="faq-ans-0b" role="region" aria-labelledby="faq-btn-0b"><div class="faq-a-inner">MargeShark est disponible directement sur le <a href="https://chromewebstore.google.com/detail/hlokbmkenoeelaglebjfogpcefadelad" target="_blank" rel="noopener" style="color:#2dd4bf;">Chrome Web Store</a> - installation gratuite en un clic.</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-0c" id="faq-btn-0c"><span>Puis-je utiliser MargeShark sur mon téléphone ?</span><span class="chev" aria-hidden="true">⌄</span></button>
@@ -2044,13 +2046,6 @@
     window.addEventListener("resize", updateDepthGauge);
     updateDepthGauge();
 
-    // Free install CTA: pas encore publié sur le Chrome Web Store (en cours
-    // de revue), donc pas de lien direct possible pour l'instant.
-    document.getElementById("freeInstallBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      alert("MargeShark est en cours de revue sur le Chrome Web Store - une étape obligatoire imposée par Google. Elle sera disponible très bientôt ! Pour être prévenu dès sa mise en ligne, écris-nous à hello@margeshark.fr.");
-    });
-
     // Requin Tigre / Grand Blanc : ouvre la modale de confirmation (case de
     // renonciation au droit de rétractation) avant de rediriger vers le
     // vrai paiement Lemon Squeezy - voir Article 5 des CGV.
@@ -2105,6 +2100,8 @@
     const openLoginModal = () => {
       loginOverlay.classList.add("open");
       document.getElementById("loginEmailInput").focus();
+      const errEl = document.getElementById("loginErrorMsg");
+      if (errEl) errEl.style.display = "none";
     };
     const closeLoginModal = () => loginOverlay.classList.remove("open");
 
@@ -2131,13 +2128,23 @@
       if (withdrawalOverlay.classList.contains("open")) closeWithdrawalModal();
     });
 
+    function showLoginError(message) {
+      const el = document.getElementById("loginErrorMsg");
+      el.textContent = message;
+      el.style.display = "block";
+    }
+    function hideLoginError() {
+      document.getElementById("loginErrorMsg").style.display = "none";
+    }
+
     document.getElementById("emailLoginBtn").addEventListener("click", async () => {
       const emailInput = document.getElementById("loginEmailInput");
       const email = emailInput.value.trim();
       const btn = document.getElementById("emailLoginBtn");
+      hideLoginError();
 
       if (!email || !email.includes("@")) {
-        alert("Merci de saisir une adresse email valide.");
+        showLoginError("Merci de saisir une adresse email valide.");
         return;
       }
 
@@ -2160,11 +2167,11 @@
           document.getElementById("loginStepCode").style.display = "block";
           document.getElementById("loginCodeInput").focus();
         } else {
-          alert(data.message || "Une erreur est survenue. Réessaie dans quelques instants.");
+          showLoginError(data.message || "Une erreur est survenue. Réessaie dans quelques instants.");
         }
       } catch (error) {
         console.warn("[MargeShark] Erreur envoi code de connexion :", error);
-        alert("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+        showLoginError("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
       }
 
       btn.disabled = false;
@@ -2176,9 +2183,10 @@
       const codeInput = document.getElementById("loginCodeInput");
       const code = codeInput.value.replace(/\D/g, "");
       const btn = document.getElementById("verifyCodeBtn");
+      hideLoginError();
 
       if (code.length !== 6) {
-        alert("Le code doit contenir 6 chiffres.");
+        showLoginError("Le code doit contenir 6 chiffres.");
         return;
       }
 
@@ -2203,13 +2211,13 @@
           localStorage.setItem("margeshark_session_token", data.sessionToken);
           window.location.href = data.redirectUrl || "https://margeshark.fr/espace-client.html";
         } else {
-          alert(data.message || "Code incorrect.");
+          showLoginError(data.message || "Code incorrect.");
           codeInput.value = "";
           codeInput.focus();
         }
       } catch (error) {
         console.warn("[MargeShark] Erreur vérification code :", error);
-        alert("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+        showLoginError("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
       }
 
       btn.disabled = false;
@@ -2220,6 +2228,7 @@
       document.getElementById("loginStepCode").style.display = "none";
       document.getElementById("loginStepEmail").style.display = "block";
       document.getElementById("loginCodeInput").value = "";
+      hideLoginError();
     });
 
     /* ===== ANALYSE VOITURE (6 modèles très vendus, jauge de prix) ===== */

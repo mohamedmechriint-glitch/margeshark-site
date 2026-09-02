@@ -43,8 +43,11 @@
     background: rgba(255,255,255,0.03); border: 1px solid var(--line);
     border-radius: 14px; padding: 20px; margin-bottom: 16px;
   }
-  .ad-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .ad-price { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+  .ad-context-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-dim); margin-bottom: 3px; }
+  .ad-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .ad-original-link { margin-bottom: 16px; }
+  .ad-original-link a { font-size: 12.5px; color: var(--teal); text-decoration: none; border-bottom: 1px dashed rgba(45,212,191,0.4); }
+  .disclaimer-share { font-size: 10.5px; color: var(--text-dim); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); line-height: 1.5; }
   .score-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
   .score-circle {
     width: 62px; height: 62px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -64,16 +67,28 @@
   .points-warn li::before { content: "🔎"; }
   .points-danger li::before { content: "⚠️"; }
   .nego-box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 6px; }
-  .cta-box {
-    text-align: center; padding: 24px 16px; background: rgba(45,212,191,0.06);
-    border: 1px solid rgba(45,212,191,0.25); border-radius: 14px; margin-top: 24px;
+
+  /* Modale promotionnelle - apparaît une fois l'analyse affichée */
+  .promo-modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(3px); z-index: 50; align-items: flex-end; justify-content: center;
   }
-  .cta-box h2 { font-family: "Space Grotesk", sans-serif; font-size: 17px; margin-bottom: 8px; }
-  .cta-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 16px; }
+  .promo-modal-overlay.open { display: flex; }
+  .promo-modal-box {
+    width: 100%; max-width: 480px; background: #0f172a; border: 1px solid var(--line);
+    border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; padding: 24px 20px 28px;
+    text-align: center; animation: promoSlideUp 0.3s ease-out;
+  }
+  @keyframes promoSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .promo-modal-close { position: absolute; top: -34px; right: 14px; background: rgba(15,23,42,0.9); border: 1px solid var(--line); color: var(--text-hi); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; }
+  .promo-modal-box h2 { font-family: "Space Grotesk", sans-serif; font-size: 18px; margin-bottom: 8px; }
+  .promo-modal-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 18px; }
   .cta-btn {
     display: inline-block; background: #facc15; color: #000; font-weight: 800;
     padding: 12px 24px; border-radius: 10px; text-decoration: none; font-size: 14px;
   }
+  .promo-modal-box .cta-btn { width: 100%; box-sizing: border-box; }
+
   .loading, .error-box { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13.5px; }
   .error-box { color: #f87171; }
 </style>
@@ -89,6 +104,15 @@
   <div class="shared-note">🔗 Analyse partagée depuis MargeShark</div>
   <div id="content">
     <div class="loading">Chargement de l'analyse...</div>
+  </div>
+</div>
+
+<div class="promo-modal-overlay" id="promoModalOverlay">
+  <div class="promo-modal-box" style="position:relative;">
+    <button class="promo-modal-close" id="promoModalClose">✕</button>
+    <h2>🦈 Toi aussi, analyse tes annonces</h2>
+    <p>MargeShark détecte les bonnes affaires (et les arnaques) sur Leboncoin en quelques secondes, gratuitement, sans carte bancaire.</p>
+    <a href="https://margeshark.fr" target="_blank" rel="noopener" class="cta-btn">Essayer MargeShark →</a>
   </div>
 </div>
 
@@ -142,11 +166,11 @@
 
       contentEl.innerHTML = `
         <div class="card">
-          ${data.title ? `<div class="ad-title">${escapeHtml(data.title)}</div>` : ""}
-          ${data.price ? `<div class="ad-price">${data.price} €${data.url ? ` · <a href="${escapeHtml(data.url)}" target="_blank" rel="noopener" style="color:var(--teal);">Voir l'annonce</a>` : ""}</div>` : ""}
+          ${data.category ? `<div class="ad-context-label">Catégorie</div><div class="ad-title">🏷️ ${escapeHtml(data.category)}</div>` : ""}
+          ${data.url ? `<div class="ad-original-link"><a href="${escapeHtml(data.url)}" target="_blank" rel="noopener">Voir l'annonce originale sur Leboncoin ↗</a></div>` : ""}
 
           <div class="score-row">
-            <div class="score-circle ${scoreClass}">${score}<span style="font-size:11px;">/10</span></div>
+            <div class="score-circle ${scoreClass}">${escapeHtml(String(score))}<span style="font-size:11px;">/10</span></div>
             <div>
               <div class="verdict">${escapeHtml(a.verdict || "-")}</div>
               <div class="confidence">🔍 Confiance de l'estimation : ${escapeHtml(confidence)}</div>
@@ -158,23 +182,46 @@
           ${renderPointsList("✅ Points forts", a.points_forts, "points-good")}
           ${renderPointsList("🔎 Points d'attention", a.points_attention, "points-warn")}
           ${renderPointsList("⚠️ Red flags détectés", a.red_flags, "points-danger")}
+          ${renderPointsList("❓ Questions au vendeur", a.questions_au_vendeur, "points-warn")}
+          ${renderPointsList("🧪 À vérifier sur place", a.points_a_verifier_sur_place, "points-warn")}
 
           ${a.messages_negociation && a.messages_negociation.doux ? `
             <div class="section-title">💬 Message de négociation suggéré</div>
             <div class="nego-box">${escapeHtml(a.messages_negociation.doux)}</div>
           ` : ""}
-        </div>
 
-        <div class="cta-box">
-          <h2>🦈 Analyse tes propres annonces</h2>
-          <p>MargeShark détecte les bonnes affaires (et les arnaques) sur Leboncoin en quelques secondes, gratuitement.</p>
-          <a href="https://margeshark.fr" class="cta-btn">Essayer MargeShark →</a>
+          <p class="disclaimer-share">Cette page présente une analyse indépendante générée par l'intelligence artificielle de MargeShark, non affiliée à Leboncoin. Le prix, la description complète et les photos de l'annonce restent uniquement consultables sur Leboncoin.fr via le lien ci-dessus.</p>
         </div>
       `;
+
+      openPromoModal();
     } catch (error) {
       contentEl.innerHTML = `<div class="error-box">Impossible de charger cette analyse pour le moment. Réessaie dans quelques instants.</div>`;
     }
   }
+
+  // Modale promotionnelle - apparaît une fois l'analyse affichée, avec un
+  // court délai pour laisser la personne lire le résultat d'abord plutôt
+  // que de lui bloquer la vue immédiatement.
+  function openPromoModal() {
+    setTimeout(() => {
+      document.getElementById("promoModalOverlay").classList.add("open");
+    }, 2500);
+  }
+
+  document.getElementById("promoModalClose").addEventListener("click", () => {
+    document.getElementById("promoModalOverlay").classList.remove("open");
+  });
+  document.getElementById("promoModalOverlay").addEventListener("click", (e) => {
+    if (e.target.id === "promoModalOverlay") {
+      document.getElementById("promoModalOverlay").classList.remove("open");
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("promoModalOverlay").classList.remove("open");
+    }
+  });
 
   loadSharedAnalysis();
 </script>

@@ -41,6 +41,7 @@
       <tr><td>Clé de licence</td><td>Reliée à ton compte pour retrouver ton abonnement/pack et tes annonces sauvegardées dans l'espace client</td></tr>
       <tr><td>Annonces sauvegardées</td><td>Titre, prix, catégorie, score et lien de l'annonce - uniquement pour les clients Requin Tigre/Grand Blanc, afin de les retrouver dans l'espace client. Pour la version gratuite, ces données restent uniquement dans ton navigateur, jamais envoyées à nos serveurs</td></tr>
       <tr><td>Contenu des annonces analysées</td><td>Titre, prix, description, critères techniques et photo principale de l'annonce Leboncoin consultée - transmis à Google Gemini pour générer l'analyse, non conservés par nos serveurs après l'analyse</td></tr>
+      <tr><td>Analyses partagées via un lien</td><td>Si tu utilises le bouton « Partager », le résultat de l'analyse (catégorie générique de l'objet à titre de repère, score, points forts/attention) est stocké sur nos serveurs et devient accessible <strong>publiquement</strong> à quiconque possède le lien, sans compte requis. Le titre exact, le prix, la description et les photos de l'annonce ne sont jamais inclus. Ce lien expire automatiquement après 90 jours.</td></tr>
     </table>
 
     <div class="callout warn">
@@ -60,13 +61,20 @@
     </table>
     <p>MargeShark ne vend ni ne loue aucune donnée personnelle à des tiers à des fins publicitaires ou commerciales.</p>
 
-    <h2>5. Durée de conservation</h2>
+    <h2>5. Transfert de données hors Union européenne</h2>
+    <p>Google LLC, société utilisée pour l'analyse par intelligence artificielle, est établie aux États-Unis. Ce transfert de données hors de l'Union européenne s'appuie sur les clauses contractuelles types (CCT) adoptées par la Commission européenne, intégrées par Google à ses conditions de traitement des données.</p>
+    <div class="callout warn">
+      <strong>Version gratuite (clé API personnelle) :</strong> selon la documentation de Google, les échanges effectués via une clé API Gemini personnelle non facturée (obtenue gratuitement sur Google AI Studio) peuvent être utilisés par Google pour améliorer ses modèles. Si tu utilises la version gratuite, cette clé et cette relation contractuelle avec Google t'appartiennent en propre - nous t'invitons à consulter les conditions actuelles de Google AI Studio si ce point t'importe.<br /><br />
+      <strong>Offres Requin Tigre et Grand Blanc :</strong> l'analyse transite par la clé API propre à MargeShark, sur un compte Google facturé.
+    </div>
+
+    <h2>6. Durée de conservation</h2>
     <p>Les données de compte (email, nom, licences liées, annonces sauvegardées) sont conservées tant que le compte existe. Les codes de connexion à usage unique expirent après 10 minutes et sont supprimés immédiatement après utilisation. Les sessions de connexion expirent après 30 jours d'inactivité.</p>
 
-    <h2>6. Tes droits</h2>
+    <h2>7. Tes droits</h2>
     <p>Conformément au RGPD, tu disposes d'un droit d'accès, de rectification, de suppression et de portabilité de tes données. Un export de tes données au format JSON est disponible directement depuis l'espace client (section RGPD &amp; Données). Pour toute autre demande, contacte-nous à l'adresse indiquée dans les <a href="mentions-legales.html">mentions légales</a>.</p>
 
-    <h2>7. Permissions de l'extension Chrome</h2>
+    <h2>8. Permissions de l'extension Chrome</h2>
     <p>L'extension MargeShark demande les permissions suivantes, chacune strictement nécessaire à son fonctionnement :</p>
     <table class="info-table">
       <tr><td>activeTab</td><td>Afficher le widget d'analyse directement sur la page d'annonce Leboncoin que tu consultes</td></tr>
@@ -77,10 +85,10 @@
       <tr><td>Accès au serveur MargeShark (Railway)</td><td>Version payante : lancer l'analyse via notre serveur ; toutes versions : synchroniser les annonces sauvegardées si tu es client payant</td></tr>
     </table>
 
-    <h2>8. Sécurité</h2>
+    <h2>9. Sécurité</h2>
     <p>Les connexions se font sans mot de passe (code à usage unique par email), réduisant le risque de vol d'identifiants. Les échanges avec nos serveurs sont chiffrés (HTTPS). Le code de connexion est protégé contre les tentatives répétées (5 essais maximum, expiration rapide).</p>
 
-    <h2>9. Modifications de cette politique</h2>
+    <h2>10. Modifications de cette politique</h2>
     <p>Cette politique peut être mise à jour pour refléter des évolutions du service. La date de dernière mise à jour est indiquée ci-dessous.</p>
 
     <div class="legal-updated">Dernière mise à jour : <span id="lastUpdate"></span></div>

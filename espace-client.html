@@ -469,11 +469,45 @@
   }
   .info-tooltip {
     display: inline-block;
-    cursor: help;
+    position: relative;
+    cursor: pointer;
     color: var(--text-dim);
     margin-left: 3px;
     font-size: 11px;
     text-transform: none;
+  }
+  .info-tooltip-bubble {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    background: #0f172a;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #cbd5e1;
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    z-index: 20;
+    pointer-events: none;
+  }
+  .info-tooltip-bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #0f172a;
+  }
+  .info-tooltip:hover .info-tooltip-bubble,
+  .info-tooltip.open .info-tooltip-bubble {
+    display: block;
   }
   .row-delete-btn {
     background: transparent;
@@ -785,6 +819,7 @@
       <button class="nav-item" data-view="alerts"><span class="nav-icon">📦</span><span class="nav-label">Articles sauvegardés</span></button>
       <button class="nav-item" data-view="billing"><span class="nav-icon">💳</span><span class="nav-label">Abonnement &amp; Facturation</span></button>
       <button class="nav-item" data-view="gdpr"><span class="nav-icon">🛡️</span><span class="nav-label">RGPD &amp; Données</span></button>
+      <a class="nav-item" href="tutoriel.html" target="_blank" rel="noopener" style="text-decoration:none;"><span class="nav-icon">📖</span><span class="nav-label">Tutoriel</span></a>
       <button class="nav-item" data-view="profile"><span class="nav-icon">👤</span><span class="nav-label">Paramètres Profil</span></button>
     </nav>
 
@@ -883,7 +918,7 @@
         <div class="glass-card mb-section">
           <div class="form-row" style="margin-bottom: 16px;">
             <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label">Marge minimale</label>
+              <label class="form-label" for="filterMargin">Marge minimale</label>
               <select class="form-select" id="filterMargin">
                 <option value="none">Toutes</option>
                 <option value="20">≥ 20%</option>
@@ -899,12 +934,12 @@
           <table class="data-table" id="opportunitiesTable">
             <thead>
               <tr>
-                <th style="width:32px;"><input type="checkbox" id="selectAllDeals" /></th>
+                <th style="width:32px;"><input type="checkbox" id="selectAllDeals" aria-label="Sélectionner tous les articles" /></th>
                 <th>Article</th>
                 <th>Prix d'achat</th>
                 <th>
                   Prix cible
-                  <span class="info-tooltip" title="Estimation du prix de revente sur le marché actuel, basée sur l'analyse IA de l'annonce.">ⓘ</span>
+                  <span class="info-tooltip" id="prixCibleTooltip">ⓘ<span class="info-tooltip-bubble">Estimation du prix de revente sur le marché actuel, basée sur l'analyse IA de l'annonce.</span></span>
                 </th>
                 <th>Marge</th>
                 <th>Ajouté le</th>
@@ -935,7 +970,7 @@
           <div class="section-title" style="margin-bottom:10px;">🔗 Mes licences</div>
           <p class="muted" style="margin-bottom:14px;">Colle ici la clé de licence reçue par email après ton achat sur Lemon Squeezy, pour la relier à ce compte et retrouver tes annonces sauvegardées ici.</p>
           <div style="display:flex; gap:8px; margin-bottom:14px;">
-            <input type="text" id="linkLicenseInput" placeholder="Coller ta clé de licence ici..." style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:rgba(255,255,255,0.03); color:var(--text-hi); font-size:13px;" />
+            <input type="text" id="linkLicenseInput" placeholder="Coller ta clé de licence ici..." aria-label="Clé de licence à relier au compte" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:rgba(255,255,255,0.03); color:var(--text-hi); font-size:13px;" />
             <button class="btn btn-teal btn-sm" id="linkLicenseBtn">Relier</button>
           </div>
           <div id="linkedLicensesList" style="display:flex; flex-direction:column; gap:8px;"></div>
@@ -1008,14 +1043,14 @@
         <div class="glass-card mb-section">
           <div class="section-title"><span>✉️ Gestion des consentements</span></div>
           <div class="checkbox-row">
-            <input type="checkbox" id="consentMarketing" />
+            <input type="checkbox" id="consentMarketing" aria-label="Autoriser les emails marketing" />
             <div>
               <div class="checkbox-label">Emails marketing</div>
               <div class="checkbox-desc">Recevoir des offres, actualités et conseils MargeShark par email.</div>
             </div>
           </div>
           <div class="checkbox-row">
-            <input type="checkbox" id="consentCookies" checked />
+            <input type="checkbox" id="consentCookies" checked aria-label="Autoriser les cookies d'analyse" />
             <div>
               <div class="checkbox-label">Cookies d'analyse</div>
               <div class="checkbox-desc">Nous aider à améliorer MargeShark via des statistiques d'usage anonymisées.</div>
@@ -1040,12 +1075,12 @@
 
         <div class="glass-card" style="max-width: 520px;">
           <div class="form-group">
-            <label class="form-label">Nom complet</label>
+            <label class="form-label" for="profileNameInput">Nom complet</label>
             <input type="text" class="form-input" id="profileNameInput" placeholder="Ton nom" />
           </div>
           <div class="form-group">
             <label class="form-label">Adresse email</label>
-            <input type="email" class="form-input" value="" placeholder="Chargement..." data-user-email disabled />
+            <input type="email" class="form-input" value="" placeholder="Chargement..." data-user-email disabled aria-label="Adresse email du compte" />
             <div class="form-hint">L'email de connexion ne peut pas être modifié ici. <a href="mailto:hello@margeshark.fr">Contacte-nous</a> si besoin.</div>
           </div>
           <button class="btn btn-teal" id="saveProfileBtn">Enregistrer les modifications</button>
@@ -1069,12 +1104,21 @@
     </div>
     <div class="form-group">
       <label class="form-label">Tape <strong>SUPPRIMER</strong> pour confirmer</label>
-      <input type="text" class="form-input" id="deleteConfirmInput" placeholder="SUPPRIMER" autocomplete="off" />
+      <input type="text" class="form-input" id="deleteConfirmInput" placeholder="SUPPRIMER" autocomplete="off" aria-label="Taper SUPPRIMER pour confirmer" />
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" data-close-modal="deleteModal">Annuler</button>
       <button class="btn btn-danger-solid" id="confirmDeleteBtn" disabled>Supprimer mon compte</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay-app" id="dealDetailModal">
+  <div class="modal-box" style="max-width:520px; max-height:80vh; overflow-y:auto;">
+    <button class="modal-close-app" data-close-modal="dealDetailModal">✕</button>
+    <h3 id="dealDetailTitle">Détail de l'analyse</h3>
+    <p class="modal-sub" id="dealDetailPrice"></p>
+    <div id="dealDetailBody" style="margin-top:14px; font-size:13px;"></div>
   </div>
 </div>
 
@@ -1100,7 +1144,7 @@
     <p class="modal-sub" id="withdrawalModalProductEc">🐅 Requin Tigre - 14,99€</p>
 
     <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; background:rgba(255,255,255,0.03); border:1.5px solid #334155; border-radius:10px; padding:14px; margin-bottom:16px;">
-      <input type="checkbox" id="withdrawalConsentCheckboxEc" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
+      <input type="checkbox" id="withdrawalConsentCheckboxEc" aria-label="J'accepte de renoncer à mon délai de rétractation de 14 jours pour un accès immédiat" style="margin-top:2px; width:18px; height:18px; flex-shrink:0; accent-color:#2dd4bf; cursor:pointer;" />
       <span style="font-size:12.5px; line-height:1.55; color:#cbd5e1;">
         Je demande l'accès immédiat au service et <strong style="color:#eaf3f7;">j'accepte de renoncer expressément à mon délai de rétractation de 14 jours</strong>, conformément à l'article L.221-28 13° du Code de la consommation applicable aux contenus numériques livrés sans support matériel.
       </span>
@@ -1385,6 +1429,45 @@
     }).join("");
   }
 
+  function renderPointsListEc(title, items, className) {
+    if (!items || items.length === 0) return "";
+    return `
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.3px; color:var(--text-dim); margin:14px 0 6px;">${title}</div>
+      <ul style="list-style:none;">
+        ${items.map((p) => `<li style="font-size:12.5px; padding:3px 0 3px 20px; position:relative;"><span style="position:absolute; left:0;">${className === "good" ? "✅" : className === "danger" ? "⚠️" : "🔎"}</span>${escapeHtml(p)}</li>`).join("")}
+      </ul>
+    `;
+  }
+
+  function openDealDetailModal(item) {
+    let data = {};
+    try { data = JSON.parse(item.data_json || "{}"); } catch (e) {}
+    const a = data.fullAnalysis || {};
+
+    document.getElementById("dealDetailTitle").textContent = item.title || "Article";
+    document.getElementById("dealDetailPrice").textContent = `${item.price || 0} € · Score ${item.score ?? "-"}/10 - ${item.margin_display ? "" : ""}${data.verdict || ""}`;
+
+    const bodyEl = document.getElementById("dealDetailBody");
+    if (!a.points_forts && !a.points_attention && !a.red_flags && !a.questions_au_vendeur) {
+      bodyEl.innerHTML = `<p class="muted" style="font-size:12.5px;">Détail complet non disponible pour cette annonce (sauvegardée avant l'ajout de cette fonctionnalité).</p>`;
+    } else {
+      bodyEl.innerHTML = `
+        ${a.avis_general_produit ? `<p style="font-size:12.5px; color:#cbd5e1;">${escapeHtml(a.avis_general_produit)}</p>` : ""}
+        ${renderPointsListEc("✅ Points forts", a.points_forts, "good")}
+        ${renderPointsListEc("🔎 Points d'attention", a.points_attention, "warn")}
+        ${renderPointsListEc("⚠️ Red flags", a.red_flags, "danger")}
+        ${renderPointsListEc("❓ Questions au vendeur", a.questions_au_vendeur, "warn")}
+        ${renderPointsListEc("🧪 À vérifier sur place", a.points_a_verifier_sur_place, "warn")}
+        ${a.messages_negociation && a.messages_negociation.doux ? `
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.3px; color:var(--text-dim); margin:14px 0 6px;">💬 Message de négociation</div>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:12.5px;">${escapeHtml(a.messages_negociation.doux)}</div>
+        ` : ""}
+      `;
+    }
+
+    document.getElementById("dealDetailModal").classList.add("open");
+  }
+
   function renderSavedItemsTable() {
     const marginFilterRaw = document.getElementById("filterMargin").value;
     const marginFilter = marginFilterRaw === "none" ? null : parseInt(marginFilterRaw, 10);
@@ -1415,7 +1498,7 @@
       return `
         <tr>
           <td><input type="checkbox" class="deal-row-checkbox" data-id="${item.id}" /></td>
-          <td>${escapeHtml(item.title || "Article")}</td>
+          <td><a href="#" class="deal-detail-link" data-id="${item.id}" style="color:var(--text-hi); text-decoration:none; border-bottom:1px dashed var(--line);">${escapeHtml(item.title || "Article")}</a></td>
           <td class="mono">${item.price || 0} €</td>
           <td class="mono">${Math.round(targetPrice)} €</td>
           <td class="mono" style="color:${marginEuro >= 0 ? "#4ade80" : "#f87171"};">${marginEuro >= 0 ? "+" : ""}${marginEuro} € (${marginPercent >= 0 ? "+" : ""}${marginPercent}%)</td>
@@ -1425,6 +1508,14 @@
         </tr>
       `;
     }).join("");
+
+    body.querySelectorAll(".deal-detail-link").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const item = realSavedItems.find((d) => d.id === link.dataset.id);
+        if (item) openDealDetailModal(item);
+      });
+    });
 
     body.querySelectorAll(".row-delete-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -1543,6 +1634,19 @@
   if (filterMarginEl) filterMarginEl.addEventListener("change", renderSavedItemsTable);
 
   loadRealSavedItems();
+
+  // Info-bulle "Prix cible" - fonctionne au survol (CSS) ET au clic/tap
+  // (JS), utile en particulier sur mobile où le survol n'existe pas.
+  const prixCibleTooltip = document.getElementById("prixCibleTooltip");
+  if (prixCibleTooltip) {
+    prixCibleTooltip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      prixCibleTooltip.classList.toggle("open");
+    });
+    document.addEventListener("click", () => {
+      prixCibleTooltip.classList.remove("open");
+    });
+  }
 
   /* ===================== BILLING ===================== */
   /* La facturation est entièrement gérée par Lemon Squeezy (Merchant of

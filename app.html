@@ -284,7 +284,7 @@
 
     <div class="card" id="freeConfigCard">
       <label class="field-label">Clé API Google Gemini</label>
-      <input type="password" class="field-input" id="geminiKeyInput" placeholder="AIzaSy..." autocomplete="off" spellcheck="false" />
+      <input type="password" class="field-input" id="geminiKeyInput" placeholder="AIzaSy..." autocomplete="off" spellcheck="false" aria-label="Clé API Google Gemini" />
       <button class="save-key-btn" id="saveGeminiKeyBtn">Enregistrer la clé</button>
 
       <div class="help-box">
@@ -329,7 +329,7 @@
 
     <div class="card" id="paidConfigCard" style="display:none;">
       <label class="field-label">Clé de licence MargeShark</label>
-      <input type="text" class="field-input" id="licenseKeyInput" placeholder="Reçue par email après ton achat" autocomplete="off" spellcheck="false" />
+      <input type="text" class="field-input" id="licenseKeyInput" placeholder="Reçue par email après ton achat" autocomplete="off" spellcheck="false" aria-label="Clé de licence MargeShark" />
       <button class="save-key-btn" id="saveLicenseKeyBtn">Enregistrer la clé</button>
       <p class="field-hint" style="margin-top:8px;">La même clé que celle utilisée dans l'extension Chrome (Requin Tigre ou Grand Blanc).</p>
       <div id="licenseStatusBox" style="display:none; margin-top:12px; padding:12px 14px; border-radius:10px;"></div>
@@ -353,7 +353,7 @@
       </div>
       <div class="thumbs-row" id="thumbsRow"></div>
       <button class="add-more-btn" id="addMoreBtn" style="display:none;">+ Ajouter une autre capture</button>
-      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple />
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple aria-label="Ajouter des captures d'écran de l'annonce" />
       <button class="analyze-btn" id="analyzeBtn">🦈 Analyser cette annonce</button>
     </div>
 
@@ -1176,11 +1176,20 @@ Ne renvoie jamais de champ "marge_estimee_revente" : cette valeur est calculée 
   });
 
   function copyToClipboard(text, btn) {
+    const original = btn.textContent;
     navigator.clipboard.writeText(text).then(() => {
-      const original = btn.textContent;
       btn.textContent = "✅";
       btn.classList.add("dd-copy-success");
       setTimeout(() => { btn.textContent = original; btn.classList.remove("dd-copy-success"); }, 1200);
+    }).catch(() => {
+      // Sans ce filet, un échec de copie (permission refusée, navigateur
+      // restrictif) ne montrait absolument rien à l'utilisateur - il
+      // pensait avoir copié le message, le collait dans Leboncoin, et
+      // rien ne s'y trouvait. Même logique que l'extension (voir
+      // content.js/attachCopyHandlers) pour rester cohérent.
+      btn.textContent = "❌";
+      btn.title = "Échec de la copie - sélectionne et copie le texte manuellement.";
+      setTimeout(() => { btn.textContent = original; }, 2000);
     });
   }
 
