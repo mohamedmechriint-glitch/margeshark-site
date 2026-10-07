@@ -820,6 +820,7 @@
       <button class="nav-item" data-view="billing"><span class="nav-icon">💳</span><span class="nav-label">Abonnement &amp; Facturation</span></button>
       <button class="nav-item" data-view="gdpr"><span class="nav-icon">🛡️</span><span class="nav-label">RGPD &amp; Données</span></button>
       <a class="nav-item" href="tutoriel.html" target="_blank" rel="noopener" style="text-decoration:none;"><span class="nav-icon">📖</span><span class="nav-label">Tutoriel</span></a>
+      <a class="nav-item" href="assistance.html" target="_blank" rel="noopener" style="text-decoration:none;"><span class="nav-icon">💬</span><span class="nav-label">Assistance</span></a>
       <button class="nav-item" data-view="profile"><span class="nav-icon">👤</span><span class="nav-label">Paramètres Profil</span></button>
     </nav>
 
@@ -2133,7 +2134,7 @@
           : `<button class="table-btn unlink-license-btn" data-key="${l.license_key}" style="font-size:11px;">Retirer</button>`;
         return `
         <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; font-size:12.5px;">
-          <span>${l.product_name || "Licence"} — <span class="muted">${l.license_key.slice(0, 8)}...</span></span>
+          <span>${l.product_name || "Licence"} - <span class="muted">${l.license_key.slice(0, 8)}...</span></span>
           ${actionBtn}
         </div>
       `;
@@ -2146,7 +2147,7 @@
           // doit quand même confirmer avant de perdre l'accès facile à son
           // solde/historique depuis l'espace client.
           pendingUnlinkKey = btn.dataset.key;
-          const productLabel = btn.closest("div").querySelector("span").textContent.split("—")[0].trim();
+          const productLabel = btn.closest("div").querySelector("span").textContent.split(" - ")[0].trim();
           document.getElementById("unlinkLicenseProductName").textContent = productLabel;
           document.getElementById("unlinkLicenseModal").classList.add("open");
         });

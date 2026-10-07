@@ -184,6 +184,30 @@
         "@type": "Answer",
         "text": "Non, aucune carte bancaire n'est nécessaire pour la version gratuite, qui nécessite une clé API Google Gemini gratuite. Sur Requin Tigre ou Grand Blanc, même cette clé personnelle n'est plus nécessaire."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "Comment contacter l'assistance MargeShark ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Utilise la page Assistance du site : renseigne ton prénom, ton nom, ton email, coche le ou les sujets concernés et décris ta demande. Tu peux aussi écrire à hello@margeshark.fr. Nous répondons par email, en général sous 2 jours ouvrés."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "J'ai un problème avec ma licence, mon paiement ou une analyse, que faire ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Écris-nous via la page Assistance en cochant le sujet correspondant (licence, paiement, analyse...) et en indiquant l'email utilisé pour l'achat. Ne nous envoie jamais ta clé de licence complète ni ta clé API Gemini."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Comment exercer mes droits sur mes données personnelles (RGPD) ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tu peux demander l'accès, la rectification ou la suppression de tes données via la page Assistance (sujet Mes données personnelles - RGPD) ou par email à hello@margeshark.fr. Le détail de ce que nous traitons est dans la politique de confidentialité."
+      }
     }
   ]
 }
@@ -1249,7 +1273,7 @@
     transition: max-height 0.25s ease;
   }
 
-  .faq-item.open .faq-a { max-height: 240px; }
+  .faq-item.open .faq-a { max-height: 1200px; }
 
   .faq-a-inner {
     padding: 0 22px 19px 22px;
@@ -1551,6 +1575,7 @@
         <a href="tutoriel.html">Tutoriel</a>
         <a href="#tarifs">Tarifs</a>
         <a href="#faq">FAQ</a>
+        <a href="assistance.html">Assistance</a>
       </div>
       <button class="nav-login-btn" id="navLoginBtn" type="button">Connexion</button>
       <a class="nav-cta nav-cta-desktop-only" href="https://chromewebstore.google.com/detail/hlokbmkenoeelaglebjfogpcefadelad" target="_blank" rel="noopener"><span class="nav-cta-full">Installer l'extension</span><span class="nav-cta-short">Installer</span></a>
@@ -1954,6 +1979,18 @@
           <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-5" id="faq-btn-5"><span>Ai-je besoin d'une carte bancaire ou d'une clé API ?</span><span class="chev" aria-hidden="true">⌄</span></button>
           <div class="faq-a" id="faq-ans-5" role="region" aria-labelledby="faq-btn-5"><div class="faq-a-inner">Non, aucune carte bancaire n'est nécessaire pour la version gratuite. Lors de l'installation, l'extension te guide pour connecter une clé API Google Gemini gratuite (obtenue en 2 minutes sur aistudio.google.com) - c'est ce moteur qui réalise l'analyse en version gratuite. Si tu passes sur Requin Tigre ou Grand Blanc, tu n'as même plus besoin de cette clé personnelle : c'est le serveur MargeShark qui s'occupe de tout.</div></div>
         </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-6" id="faq-btn-6"><span>Comment contacter l'assistance MargeShark ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-6" role="region" aria-labelledby="faq-btn-6"><div class="faq-a-inner">Utilise la page <a href="assistance.html" style="color:#2dd4bf;">Assistance</a> : renseigne ton prénom, ton nom, ton email, coche le ou les sujets concernés et décris ta demande. Tu peux aussi écrire à <a href="mailto:hello@margeshark.fr" style="color:#2dd4bf;">hello@margeshark.fr</a>. Nous répondons par email, en général sous 2 jours ouvrés.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-7" id="faq-btn-7"><span>J'ai un problème avec ma licence, mon paiement ou une analyse, que faire ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-7" role="region" aria-labelledby="faq-btn-7"><div class="faq-a-inner">Écris-nous via la page <a href="assistance.html" style="color:#2dd4bf;">Assistance</a> en cochant le sujet correspondant (licence, paiement, analyse...) et en indiquant l'email utilisé pour l'achat. Ne nous envoie jamais ta clé de licence complète ni ta clé API Gemini.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-ans-8" id="faq-btn-8"><span>Comment exercer mes droits sur mes données personnelles (RGPD) ?</span><span class="chev" aria-hidden="true">⌄</span></button>
+          <div class="faq-a" id="faq-ans-8" role="region" aria-labelledby="faq-btn-8"><div class="faq-a-inner">Tu peux demander l'accès, la rectification ou la suppression de tes données via la page <a href="assistance.html" style="color:#2dd4bf;">Assistance</a> (sujet « Mes données personnelles (RGPD) ») ou par email à hello@margeshark.fr. Le détail de ce que nous traitons est dans la <a href="politique-confidentialite.html" style="color:#2dd4bf;">politique de confidentialité</a>.</div></div>
+        </div>
       </div>
     </div>
   </section>
@@ -1986,6 +2023,7 @@
           <a href="#fonctionnalites">Fonctionnalités</a>
           <a href="#tarifs">Tarifs</a>
           <a href="#faq">FAQ</a>
+          <a href="assistance.html">Assistance</a>
           <a href="mentions-legales.html">Mentions légales</a>
           <a href="cgu.html">CGU</a>
           <a href="cgv.html">CGV</a>
