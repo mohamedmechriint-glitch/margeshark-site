@@ -1185,6 +1185,49 @@
   // espace client vide/trompeur à quelqu'un de non authentifié.
   let currentUserEmail = null;
 
+  // Liaison automatique depuis l'extension : le bouton "Connexion" / "Mon
+  // espace client" de l'extension ouvre cette page avec #link=<clé>. Le
+  // fragment (#...) n'est jamais envoyé au serveur ni dans le Referer. On le
+  // met de côté (valable 1h) puis on l'efface de l'URL immédiatement, avant
+  // une éventuelle redirection vers la connexion.
+  (function capturePendingLink() {
+    try {
+      const m = /[#&]link=([A-Za-z0-9-]{8,80})/.exec(window.location.hash || "");
+      if (m) {
+        localStorage.setItem("margeshark_pending_link", JSON.stringify({ key: m[1].toUpperCase(), ts: Date.now() }));
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    } catch (e) {}
+  })();
+
+  async function processPendingLink() {
+    let pending = null;
+    try { pending = JSON.parse(localStorage.getItem("margeshark_pending_link") || "null"); } catch (e) {}
+    if (!pending || !pending.key) return;
+    localStorage.removeItem("margeshark_pending_link");
+    if (Date.now() - pending.ts > 60 * 60 * 1000) return;
+    try {
+      const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/account/link-license`, {
+        method: "POST",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({ licenseKey: pending.key })
+      });
+      if (response.ok) {
+        showToast("✅ Ta licence de l'extension est maintenant reliée à ton compte.");
+        loadLinkedLicenses();
+        renderPlanSummary();
+        renderOnboardingCard();
+        loadAutoBalance();
+        loadRealSavedItems();
+      } else {
+        const data = await response.json().catch(() => ({}));
+        showToast("❌ " + (data.message || "Impossible de relier la licence automatiquement. Colle ta clé manuellement."));
+      }
+    } catch (e) {
+      showToast("❌ Erreur réseau - colle ta clé manuellement pour la relier.");
+    }
+  }
+
   async function checkAuthOrRedirect() {
     try {
       const response = await fetch(`${MARGESHARK_BACKEND_URL}/api/auth/me`, {
@@ -1234,6 +1277,7 @@
       }
 
       document.body.classList.add("auth-verified");
+      processPendingLink();
       return true;
     } catch (error) {
       // Si le backend est injoignable, on n'affiche pas une redirection en
